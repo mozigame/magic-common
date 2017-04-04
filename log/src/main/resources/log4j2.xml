@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <RollingFile name="debug" fileName="../logs/debug.log" filePattern="logsBakup/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="info" fileName="../logs/info.log" filePattern="logsBakup/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="error" fileName="../logs/error.log" filePattern="logsBakup/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="request" fileName="../logs/request.log" filePattern="logsBakup/$${date:yyyy-MM}/request-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="db_info" fileName="../logs/db_info.log" filePattern="logsBakup/$${date:yyyy-MM}/db_info-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="review_info" fileName="../logs/review_info.log" filePattern="logsBakup/$${date:yyyy-MM}/review_info-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <logger name="debug" level="debug" additivity="true">
+            <AppenderRef ref="debug"/>
+        </logger>
+        <logger name="info" level="info" additivity="true">
+            <AppenderRef ref="info"/>
+        </logger>
+        <logger name="error" level="error" additivity="true">
+            <AppenderRef ref="error"/>
+        </logger>
+        <logger name="request" level="info" additivity="true">
+            <AppenderRef ref="request"/>
+        </logger>
+        <logger name="db_info" level="info" additivity="true">
+            <AppenderRef ref="db_info"/>
+        </logger>
+        <logger name="review_info" level="info" additivity="true">
+            <AppenderRef ref="review_info"/>
+        </logger>
+        <logger name="org.springframework" level="info" additivity="true">
+            <AppenderRef ref="info"/>
+        </logger>
+        <logger name="o.s.c.e" level="info" additivity="true">
+            <AppenderRef ref="info"/>
+        </logger>
+        <logger name="o.s.jndi" level="info" additivity="true">
+            <AppenderRef ref="info"/>
+        </logger>
+        <logger name="o.springframework" level="info" additivity="true">
+            <AppenderRef ref="info"/>
+        </logger>
+    </Loggers>
+</Configuration>

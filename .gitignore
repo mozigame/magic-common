@@ -1,0 +1,12 @@
+*.iml
+.idea/
+*~
+.classpath
+.classes
+.project
+.logsBakup
+.settings/
+logs/
+target/
+*.log
+*.log.*

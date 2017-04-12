@@ -18,7 +18,6 @@
         <module>codis</module>
         <module>config</module>
         <module>model</module>
-        <module>sms</module>
         <module>uuid</module>
         <module>message</module>
     </modules>
@@ -65,48 +64,6 @@
                 <artifactId>uuid</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
-            <!-- snapshot -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>snapshot</artifactId>
-                <version>2.0.3-SNAPSHOT</version>
-            </dependency>
-            <!-- shsnapshot -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>shsnapshot</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <!-- merchant -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>merchant</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <!-- stock -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>stock</artifactId>
-                <version>2.0.3-SNAPSHOT</version>
-            </dependency>
-            <!-- service服务社 -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>service</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <!--社区工具-->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>group</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <!--省市区县工具-->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>geo</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
             <!--codis工具-->
             <dependency>
                 <groupId>com.magic.commons</groupId>
@@ -125,22 +82,10 @@
                 <artifactId>config</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
-            <!--FreeMarker-->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
             <!--model-->
             <dependency>
                 <groupId>com.magic.commons</groupId>
                 <artifactId>model</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <!--sms-->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>sms</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <!--message-->
@@ -511,6 +456,54 @@
                 <groupId>dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>1.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>0.4.2</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>tfs-client</groupId>
+                <artifactId>tfs-client</artifactId>
+                <version>2.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.drewnoakes</groupId>
+                <artifactId>metadata-extractor</artifactId>
+                <version>2.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>1.15</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-multipart</artifactId>
+                <version>1.15</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-spring</artifactId>
+                <version>1.15</version>
+                <!--<exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                </exclusions>-->
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>1.15</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>1.15</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -23,13 +23,25 @@ public class CommonException extends RuntimeException {
     public static final long LEVE_MAX = 9;
 
     /**
-     * 最大异常Code
+     * 最大系统异常Code
      */
     public static final long MAX = 99;
 
-    public static final long LEVEL_FACTOR = 10000;
+    /**
+     * 最大系统业务异常Code
+     */
+    public static final long SERVICE_MAX = 999;
 
-    public static final int SYSTEMCODE_FACTOR = 100;
+    /**
+     * 客户端
+     */
+    public static final long SHOW_MAX = 9;
+
+    public static final long LEVEL_FACTOR = 1000000;
+
+    public static final int SYSTEMCODE_FACTOR = 10000;
+
+    public static final int SHOWCODE_FACTOR = 1000;
 
 
     /**
@@ -48,6 +60,11 @@ public class CommonException extends RuntimeException {
      * 业务异常Code 例：密码错误 1001
      */
     private int serviceCode;
+
+    /**
+     * 客户端展示方式Code 例：闪现3秒 1
+     */
+    private int showCode;
 
     /**
      * http状态码
@@ -71,19 +88,21 @@ public class CommonException extends RuntimeException {
      * @see com.magic.api.commons.core.exception.CommonException#level
      * @param systemCode
      * @param serviceCode
+     * @param showCode
      * @param httpCode
      * @param enMessage
      * @param cnMessage
      */
-    public CommonException(int level, int systemCode, int serviceCode, int httpCode, String enMessage, String cnMessage) {
+    public CommonException(int level, int systemCode, int serviceCode, int showCode, int httpCode, String enMessage, String cnMessage) {
         super(enMessage);
-        if (level > LEVE_MAX || systemCode > MAX  || serviceCode > MAX) {
-            ApiLogger.error("exception code error! " + cnMessage + " level " + level + " systemCode " + systemCode + " serviceCode " + serviceCode);
+        if (level > LEVE_MAX || systemCode > MAX  || serviceCode > SERVICE_MAX || showCode > SHOW_MAX) {
+            ApiLogger.error("exception code error! " + cnMessage + " level " + level + " systemCode " + systemCode + " serviceCode " + serviceCode + " showCode " + showCode);
             throw ExceptionFactor.ERROR_CODE_EXCEPTION;
         }
         this.level = level;
         this.systemCode = systemCode;
         this.serviceCode = serviceCode;
+
         this.httpCode = httpCode;
         this.enMessage = enMessage;
         this.cnMessage = cnMessage;
@@ -94,7 +113,7 @@ public class CommonException extends RuntimeException {
      * @return  错误编码
      */
     public long getErrorCode() {
-        return LEVEL_FACTOR * level + SYSTEMCODE_FACTOR * systemCode + serviceCode;
+        return LEVEL_FACTOR * level + SYSTEMCODE_FACTOR * systemCode + SHOWCODE_FACTOR * showCode + serviceCode;
     }
 
     public int getLevel() {

@@ -1,6 +1,7 @@
 package com.magic.api.commons.core.context;
 
 
+import com.magic.api.commons.core.exception.ExceptionFactor;
 import com.magic.api.commons.exception.CommonException;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.utils.StringUtils;
@@ -11,22 +12,47 @@ import java.io.Serializable;
  * 客户端版本
  * @author zz
  */
-public class ClientVersion implements Serializable {
+public class ClientVersion implements Serializable, Comparable<ClientVersion> {
 
     /**
      * 数据分割
      */
     private static final String SPLIT = ".";
 
+    /**
+     * serialVersionUID
+     */
     private static final long serialVersionUID = 6151930722084072143L;
 
+    /**
+     * 主版本号
+     */
     public int major;
+
+    /**
+     * 子版本号
+     */
     public int minor;
+
+    /**
+     * 修正版本号
+     */
     public int revision;
+
+    /**
+     * 编译版本号
+     */
     public int build;
 
     public ClientVersion() {
 
+    }
+
+    public ClientVersion(Integer major, Integer minor, Integer revision, Integer build) {
+        this.major = major;
+        this.minor = minor;
+        this.revision = revision;
+        this.build = build;
     }
 
     public ClientVersion(String version) {
@@ -53,11 +79,11 @@ public class ClientVersion implements Serializable {
                         this.build = Integer.valueOf(strings[3]);
                         break;
                     default:
-                        throw new CommonException("非法请求");
+                        throw ExceptionFactor.DEFAULT_EXCEPTION;
                 }
             }
         } catch (Exception e) {
-            ApiLogger.error("解析客户端版本法发生异 version " + version, e);
+            ApiLogger.error("parse client version exception" + version, e);
         }
     }
 
@@ -95,6 +121,48 @@ public class ClientVersion implements Serializable {
 
     @Override
     public String toString() {
-        return major + SPLIT + minor + SPLIT + revision + SPLIT + build;
+        StringBuilder version = new StringBuilder().append(major).append(SPLIT).append(minor).append(SPLIT)
+                .append(revision).append(SPLIT).append(build);
+        return String.valueOf(version);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        ClientVersion that = (ClientVersion) object;
+
+        if (major != that.major) return false;
+        if (minor != that.minor) return false;
+        if (revision != that.revision) return false;
+        return build == that.build;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = major;
+        result = 31 * result + minor;
+        result = 31 * result + revision;
+        result = 31 * result + build;
+        return result;
+    }
+
+    @Override
+    public int compareTo(ClientVersion o) {
+        int compare = major - o.getMajor();
+        if (0 != compare) {
+            return compare;
+        }
+        compare = minor - o.getMinor();
+        if (0 != compare) {
+            return compare;
+        }
+        compare = revision - o.getRevision();
+        if (0 != compare) {
+            return compare;
+        }
+        return build - o.getBuild();
     }
 }

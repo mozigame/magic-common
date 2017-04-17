@@ -7,6 +7,12 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
         </RollingFile>
+        <RollingFile name="warn" fileName="../logs/warn.log" filePattern="logsBakup/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
         <RollingFile name="info" fileName="../logs/info.log" filePattern="logsBakup/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}.gz">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss SSS} [%t] %p - %msg%n"/>
             <Policies>
@@ -41,6 +47,9 @@
     <Loggers>
         <logger name="debug" level="debug" additivity="true">
             <AppenderRef ref="debug"/>
+        </logger>
+        <logger name="warn" level="warn" additivity="true">
+            <AppenderRef ref="warn"/>
         </logger>
         <logger name="info" level="info" additivity="true">
             <AppenderRef ref="info"/>

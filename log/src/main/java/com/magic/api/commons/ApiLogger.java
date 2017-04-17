@@ -15,6 +15,7 @@ public class ApiLogger {
      * 空格分隔符
      */
     private static final Logger DEBUG = LogManager.getLogger("debug");
+    private static final Logger WARN = LogManager.getLogger("warn");
     private static final Logger INFO = LogManager.getLogger("info");
     private static final Logger ERROR = LogManager.getLogger("error");
     private static final Logger REQUEST = LogManager.getLogger("request");
@@ -39,6 +40,10 @@ public class ApiLogger {
 
     public static void dbInfo(String message) {
         DB_INFO.info(message);
+    }
+
+    public static void warn(String message) {
+        WARN.warn(message);
     }
 
     public static void requset(String message) {

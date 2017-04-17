@@ -4,6 +4,8 @@ import com.magic.api.commons.core.log.RequestLogRecord;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author zz
@@ -12,12 +14,7 @@ public class RequestContext {
 
     private RequestContext(){}
 
-    private static final ThreadLocal<RequestContext> zbContextThreadLocal = new ThreadLocal<RequestContext>();
-
-    /**
-     * 是否读取主库
-     */
-    private boolean readMaster = false;
+    private static final ThreadLocal<RequestContext> contextThreadLocal = new ThreadLocal<RequestContext>();
 
     /**
      * 返回JSON数据
@@ -25,9 +22,14 @@ public class RequestContext {
     private Result result = new Result();
 
     /**
+     * 是否读取Master
+     */
+    private boolean readMaster;
+
+    /**
      * 用户ID APP端服务使用
      */
-    private int uid;
+    private long uid;
 
     /**
      * 客户端相关数据
@@ -54,28 +56,22 @@ public class RequestContext {
      */
     private HttpServletResponse response;
 
+    /**
+     * 扩展字段
+     */
+    private Map<String, Object> ext = new HashMap<String, Object>();
+
     public static RequestContext getRequestContext() {
-        RequestContext requestContext = zbContextThreadLocal.get();
+        RequestContext requestContext = contextThreadLocal.get();
         if (null == requestContext) {
             requestContext = new RequestContext();
-            zbContextThreadLocal.set(requestContext);
+            contextThreadLocal.set(requestContext);
         }
         return requestContext;
     }
 
-    /**
-     * 非异常情况下给客户端提示错误信息
-     * 用户逻辑上的错误 非代码异常情况下
-     * @param errorMsg  客户端展示错误信息
-     */
-    public static void setErrorMsg(String errorMsg) {
-        Result result = getRequestContext().getResult();
-        result.setApistatus(0);
-        result.setErrorMsg(errorMsg);
-    }
-
     public static void clearRequestContext() {
-        zbContextThreadLocal.remove();
+        contextThreadLocal.remove();
     }
 
     public class Result {
@@ -85,15 +81,6 @@ public class RequestContext {
          */
         private boolean wrap = true;
 
-        /**
-         * 框架级别apistatus状态值
-         */
-        private int apistatus = 1;
-
-        /**
-         * 返回客户端错误提示
-         */
-        private String errorMsg;
 
         public boolean isWrap() {
             return wrap;
@@ -103,33 +90,6 @@ public class RequestContext {
             this.wrap = wrap;
         }
 
-        public int getApistatus() {
-            return apistatus;
-        }
-
-        public void setApistatus(int apistatus) {
-            this.apistatus = apistatus;
-        }
-
-        public String getErrorMsg() {
-            return errorMsg;
-        }
-
-        public void setErrorMsg(String errorMsg) {
-            this.errorMsg = errorMsg;
-        }
-    }
-
-    public static ThreadLocal<RequestContext> getzbContextThreadLocal() {
-        return zbContextThreadLocal;
-    }
-
-    public boolean isReadMaster() {
-        return readMaster;
-    }
-
-    public void setReadMaster(boolean readMaster) {
-        this.readMaster = readMaster;
     }
 
     public Result getResult() {
@@ -140,11 +100,19 @@ public class RequestContext {
         this.result = result;
     }
 
-    public int getUid() {
+    public boolean isReadMaster() {
+        return readMaster;
+    }
+
+    public void setReadMaster(boolean readMaster) {
+        this.readMaster = readMaster;
+    }
+
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
@@ -157,6 +125,9 @@ public class RequestContext {
     }
 
     public String getIp() {
+        if (null == ip) {
+            return "";
+        }
         return ip;
     }
 
@@ -186,5 +157,9 @@ public class RequestContext {
 
     public void setResponse(HttpServletResponse response) {
         this.response = response;
+    }
+
+    public Map<String, Object> getExt() {
+        return ext;
     }
 }

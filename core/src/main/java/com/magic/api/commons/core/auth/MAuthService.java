@@ -17,6 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 @Order(10)
 public class MAuthService implements AuthService {
 
+    /**
+     * 当前验证方式 是否支持本次请求
+     * @param request           HttpServletRequest
+     * @param response          HttpServletResponse
+     * @param handlerMethod     HandlerMethod
+     * @return  是否支持
+     */
     @Override
     public boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         Access access = handlerMethod.getMethod().getAnnotation(Access.class);
@@ -34,11 +41,11 @@ public class MAuthService implements AuthService {
         RequestContext requestContext = RequestContext.getRequestContext();
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         int uid = authModel.getUid();
-        int appId = authModel.getAppId();
+        /*int appId = authModel.getAppId();
         requestContext.getClient().setAppId(appId);
-        requestLogRecord.setUserType(RequestLogRecord.UserType.zb);
+        requestLogRecord.setUserType(RequestLogRecord.UserType.zb);*/
         requestLogRecord.setAuth(Access.AccessType.COMMON.getName());
-        requestLogRecord.setAppid(appId);
+        /*requestLogRecord.setAppid(appId);*/
         return uid;
     }
 

@@ -505,6 +505,12 @@
                 <artifactId>jersey-json</artifactId>
                 <version>1.15</version>
             </dependency>
+            <!-- thrift -->
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>0.10.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -1,6 +1,7 @@
 package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
+import com.magic.api.commons.core.exception.ExceptionFactor;
 import com.magic.api.commons.exception.CommonException;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.tools.HeaderUtil;
@@ -18,19 +19,31 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * 权限处理Service
+ */
 @Component
 public class RequestServiceImpl implements RequestService, ApplicationContextAware {
 
+    /**
+     * Spring ApplicationContext
+     */
     private ApplicationContext applicationContext;
 
+    /**
+     * 权限验证列表 按照顺序依次验证
+     */
     private List<AuthService> authServices;
 
+    /**
+     * 对本次请求进行权限验证
+     * @param request           HttpServletRequest
+     * @param response          HttpServletResponse
+     * @param handlerMethod     HandlerMethod
+     * @return 是否验证通过
+     */
     @Override
     public boolean request(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
-        return doAuth(request, response, handlerMethod);
-    }
-
-    private boolean doAuth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         AuthService authService = getAuth(request, response, handlerMethod);
         Integer uid = authService.auth(request, response, handlerMethod);
         if (null != uid && 0 < uid) {
@@ -39,10 +52,17 @@ public class RequestServiceImpl implements RequestService, ApplicationContextAwa
             requestContext.getRequestLogRecord().setUid(uid);
             return true;
         } else {
-            throw new CommonException("UID认证失败");
+            throw ExceptionFactor.INVALID_UID_EXCEPTION;
         }
     }
 
+    /**
+     * 从验证列表中匹配验证方式
+     * @param request       HttpServletRequest
+     * @param response      HttpServletResponse
+     * @param handlerMethod HandlerMethod
+     * @return  验证Service
+     */
     private AuthService getAuth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         AuthService auth = null;
         for (AuthService authService : authServices) {
@@ -54,11 +74,16 @@ public class RequestServiceImpl implements RequestService, ApplicationContextAwa
         //不能支持的验证方式
         if (null == auth) {
             LogError(request, handlerMethod);
-            throw new CommonException("无法验证");
+            throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
         }
         return auth;
     }
 
+    /**
+     * 错误日志记录
+     * @param request           HttpServletRequest
+     * @param handlerMethod     HandlerMethod
+     */
     private void LogError(HttpServletRequest request, HandlerMethod handlerMethod) {
         try {
             RequestContext requestContext = RequestContext.getRequestContext();
@@ -66,12 +91,15 @@ public class RequestServiceImpl implements RequestService, ApplicationContextAwa
             String authHeader = HeaderUtil.getMauth(request);
             Method method = handlerMethod.getMethod();
             Access annotation = method.getAnnotation(Access.class);
-            ApiLogger.error("无法验证 method " + method.toString() + " annotation " + annotation + " ip " + ip + " mauth " + authHeader);
+            ApiLogger.error("con not auth method " + method.toString() + " annotation " + annotation + " ip " + ip + " mauth " + authHeader);
         } catch (Exception e) {
             ApiLogger.error("LogError", e);
         }
     }
 
+    /**
+     * 初始化验证Service
+     */
     private void initAuthServices() {
         if (null != authServices) {
             return;
@@ -100,6 +128,11 @@ public class RequestServiceImpl implements RequestService, ApplicationContextAwa
         }
     }
 
+    /**
+     * Spring钩子注入ApplicationContext
+     * @param applicationContext    ApplicationContext
+     * @throws BeansException   BeansException
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;

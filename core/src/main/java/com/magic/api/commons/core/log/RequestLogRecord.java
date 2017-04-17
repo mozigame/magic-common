@@ -136,7 +136,7 @@ public class RequestLogRecord {
      */
     public enum UserType {
 
-        zb(1, "zb"), guest(2, "guest"), web(3, "web"), internal(4, "internal");
+        unknown(0, "unknown"), magic(1, "zb"), guest(2, "guest"), web(3, "web"), internal(4, "internal");
 
         UserType(int value, String name) {
             this.value = value;
@@ -144,7 +144,7 @@ public class RequestLogRecord {
         }
 
         /**
-         * 1.实惠用户 2.whale用户
+         * 1.平台用户 2.非注册用户
          */
         private int value;
         private String name;

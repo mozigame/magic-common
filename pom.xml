@@ -20,6 +20,7 @@
         <module>model</module>
         <module>uuid</module>
         <module>message</module>
+        <module>atlas</module>
     </modules>
 
     <properties>
@@ -92,6 +93,12 @@
             <dependency>
                 <groupId>com.magic.commons</groupId>
                 <artifactId>message</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <!--atlas-->
+            <dependency>
+                <groupId>com.magic.commons</groupId>
+                <artifactId>atlas</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <!--MySQL驱动-->

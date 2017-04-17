@@ -93,16 +93,16 @@ public class CommonException extends RuntimeException {
      * @param enMessage
      * @param cnMessage
      */
-    public CommonException(int level, int systemCode, int serviceCode, int showCode, int httpCode, String enMessage, String cnMessage) {
+    public CommonException(int level, int systemCode, int showCode, int serviceCode, int httpCode, String enMessage, String cnMessage) {
         super(enMessage);
-        if (level > LEVE_MAX || systemCode > MAX  || serviceCode > SERVICE_MAX || showCode > SHOW_MAX) {
+        if (level > LEVE_MAX || systemCode > MAX || showCode > SHOW_MAX || serviceCode > SERVICE_MAX ) {
             ApiLogger.error("exception code error! " + cnMessage + " level " + level + " systemCode " + systemCode + " serviceCode " + serviceCode + " showCode " + showCode);
             throw ExceptionFactor.ERROR_CODE_EXCEPTION;
         }
         this.level = level;
         this.systemCode = systemCode;
+        this.showCode = showCode;
         this.serviceCode = serviceCode;
-
         this.httpCode = httpCode;
         this.enMessage = enMessage;
         this.cnMessage = cnMessage;

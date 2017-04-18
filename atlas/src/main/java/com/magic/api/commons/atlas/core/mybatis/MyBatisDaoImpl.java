@@ -1,10 +1,12 @@
 package com.magic.api.commons.atlas.core.mybatis;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.magic.api.commons.atlas.core.BaseDao;
-import com.magic.api.commons.atlas.core.Page;
 import com.magic.api.commons.atlas.core.PropertyFilter;
 import com.magic.api.commons.atlas.utils.reflection.Reflections;
+import com.magic.api.commons.model.Page;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
@@ -14,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * @param <T>
@@ -60,6 +63,12 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     protected SqlSession globalSqlSessionTemplate;
     /* 默认根据1024取余 */
     private static final int RANGE_SIZE = 1024;
+    /* 分片查询线程池*/
+    private static ExecutorService SELECT_EXEC;
+    /*cpu核心数*/
+    private static int CPU_CORE_NUMBER;
+    /* 使用多线程处理分片id数据库操作的阀值,默认为cpu数量的1/2 */
+    private static int PROC_EXEC_THRESHOLD;
 
 
     /**
@@ -70,6 +79,9 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         this.entityClass = Reflections.getSuperClassGenricType(getClass());
         this.pkClass = Reflections.getSuperClassGenricType(getClass(), 1);
         this.sqlMapNamespace = entityClass.getName();
+        CPU_CORE_NUMBER = Runtime.getRuntime().availableProcessors();
+        PROC_EXEC_THRESHOLD = CPU_CORE_NUMBER / 2;
+        initExecutor();
     }
 
     /**
@@ -126,7 +138,7 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
      * @Des 获取跨实例存储数据的sqlSessionTemplate
      */
     public SqlSession getSqlSession(final PK id) {
-        int mod = id.hashCode() % RANGE_SIZE;
+        int mod = Math.abs(id.hashCode()) % RANGE_SIZE;
         for (Map.Entry<Integer, Integer> entry : dbModShardRange.entrySet()) {
             if (mod >= entry.getKey() && mod <= entry.getValue()) {
                 return shardSqlSessionTemplates.get(entry.getKey());
@@ -201,6 +213,22 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public int delete(T entity) throws Exception {
         return getSqlSession().delete(sqlMapNamespace + "." + POSTFIX_DELETE,
                 entity);
+    }
+
+    @Override
+    public int delete(PK pk) throws Exception {
+        return getSqlSession().delete(sqlMapNamespace + "." + POSTFIX_DELETE,
+                pk);
+    }
+
+    @Override
+    public int delete(PK pk, boolean isShard) throws Exception {
+        if (isShard)
+            return getSqlSession(pk).delete(sqlMapNamespace + "." + POSTFIX_DELETE,
+                    pk);
+        else
+            return getSqlSession().delete(sqlMapNamespace + "." + POSTFIX_DELETE,
+                    pk);
     }
 
     @Override
@@ -348,6 +376,23 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECT, entity);
     }
 
+    @Override
+    public List<T> find(List<PK> ids) throws Exception {
+        return getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECT, ids);
+    }
+
+    @Override
+    public List<T> find(List<PK> ids, boolean isShard) throws Exception {
+        if (isShard) {
+            if (ids.size() < PROC_EXEC_THRESHOLD)
+                return coreFind(0, ids.size(), ids);
+            else
+                return assembleFindResult(ids);
+        } else {
+            return getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECT, ids);
+        }
+    }
+
     public final long findCount(final T entity) throws Exception {
         return getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECT, entity).size();
     }
@@ -394,4 +439,110 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
             throws Exception {
         return null;
     }
+
+    /**
+     * 开启线程池
+     */
+    private void initExecutor() {
+        SELECT_EXEC = Executors.newFixedThreadPool(CPU_CORE_NUMBER);
+    }
+
+    /**
+     * 关闭线程池
+     */
+    private void closeExecutor() {
+        SELECT_EXEC.shutdown();
+    }
+
+    /**
+     * 内部类,实现Callable，执行任务
+     */
+    class ExtraResult implements Callable<List<T>> {
+        private List<PK> numbers;
+        private int start;
+
+        private int end;
+
+        public ExtraResult(final List<PK> numbers, int start, int end) {
+            this.numbers = numbers;
+            this.start = start;
+            this.end = end;
+        }
+
+        public List<T> call() throws Exception {
+            return coreFind(start, end, numbers);
+        }
+    }
+
+    /**
+     * @param start
+     * @param end
+     * @param numbers
+     * @return
+     * @Doc 核心查询方法, 多线程或者单线程查询都可使用
+     */
+    public List<T> coreFind(int start, int end, List<PK> numbers) {
+        Map<Integer, List<PK>> mapKeys = new HashedMap(dbModShardRange.size());
+        for (int i = start; i < end; i++) {
+            PK id = numbers.get(i);
+            int mod = Math.abs(id.hashCode()) % RANGE_SIZE;
+            for (Map.Entry<Integer, Integer> entry : dbModShardRange.entrySet()) {
+                if (mod >= entry.getKey() && mod <= entry.getValue()) {
+                    if (mapKeys.get(entry.getKey()) != null)
+                        mapKeys.get(entry.getKey()).add(id);
+                    else
+                        mapKeys.put(entry.getKey(), Lists.newArrayList(id));
+                }
+            }
+        }
+        List<T> allRes = Lists.newArrayList();
+        for (Map.Entry<Integer, List<PK>> entry : mapKeys.entrySet()) {
+            allRes.addAll(shardSqlSessionTemplates.get(entry.getKey()).selectList(sqlMapNamespace + "." + POSTFIX_SELECT, entry.getValue()));
+        }
+        return allRes;
+    }
+
+    /**
+     * @param ids
+     * @return
+     * @Doc 线程池处理逻辑, 并将查询结果汇总
+     */
+    public List<T> assembleFindResult(final List<PK> ids) {
+        // 根据CPU核心个数拆分任务，创建FutureTask并提交到Executor
+        int increment = ids.size() / (CPU_CORE_NUMBER) + 1;
+        List<FutureTask<List<T>>> tasks = new ArrayList<>();
+        List<T> results = Lists.newArrayList();
+        for (int i = 0; i < CPU_CORE_NUMBER; i++) {
+            int start = increment * i;
+            int end = increment * i + increment;
+            if (end > ids.size()) {
+                end = ids.size();
+                ExtraResult cal = new ExtraResult(ids, start, end);
+                FutureTask<List<T>> task = new FutureTask<>(cal);
+                tasks.add(task);
+                if (!SELECT_EXEC.isShutdown()) {
+                    SELECT_EXEC.submit(task);
+                }
+                break;
+            } else {
+                ExtraResult cal = new ExtraResult(ids, start, end);
+                FutureTask<List<T>> task = new FutureTask<>(cal);
+                tasks.add(task);
+                if (!SELECT_EXEC.isShutdown()) {
+                    SELECT_EXEC.submit(task);
+                }
+            }
+        }
+        for (FutureTask<List<T>> futureTask : tasks) {
+            try {
+                results.addAll(futureTask.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return results;
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.magic.api.commons.atlas.core;
 
+import com.magic.api.commons.model.Page;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +45,23 @@ public interface BaseDao<T, PK extends Serializable> {
     int delete(final T entity) throws Exception;
 
     /**
+     * 删除对象.
+     *
+     * @param pk 对象必须是session中的对象或含id属性的transient对象.
+     */
+    int delete(final PK pk) throws Exception;
+
+    /**
      * 删除对象.根据id获取数据源
      *
-     * @param entitys 对象必须是session中的对象或含id属性的transient对象.
+     * @param pk 对象必须是session中的对象或含id属性的transient对象.
+     */
+    int delete(final PK pk, boolean isShard) throws Exception;
+
+    /**
+     * 删除对象.根据id获取数据源
+     *
+     * @param entity 对象必须是session中的对象或含id属性的transient对象.
      */
     int delete(final PK id, final T entity) throws Exception;
 
@@ -139,6 +155,22 @@ public interface BaseDao<T, PK extends Serializable> {
      * @return List<T> 查询结果对象列表
      */
     List<T> find(T entity) throws Exception;
+
+    /**
+     * @param ids
+     * @return
+     * @throws Exception
+     * @Doc 查询对象列表
+     */
+    List<T> find(List<PK> ids) throws Exception;
+
+    /**
+     * @param ids
+     * @return
+     * @throws Exception
+     * @Doc 查询对象列表
+     */
+    List<T> find(List<PK> ids, boolean isShard) throws Exception;
 
 
     /**

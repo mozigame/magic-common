@@ -14,6 +14,10 @@
     <dependencies>
         <dependency>
             <groupId>com.magic.commons</groupId>
+            <artifactId>model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.magic.commons</groupId>
             <artifactId>log</artifactId>
         </dependency>
         <!-- google jar-->

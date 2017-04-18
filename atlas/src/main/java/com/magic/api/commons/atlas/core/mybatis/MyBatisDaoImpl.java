@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.magic.api.commons.atlas.core.BaseDao;
 import com.magic.api.commons.atlas.utils.reflection.Reflections;
 import com.magic.api.commons.model.Page;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
@@ -13,6 +12,7 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -488,7 +488,7 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
      * @Doc 核心查询方法, 多线程或者单线程查询都可使用
      */
     public List<T> coreFind(int start, int end, List<PK> numbers) {
-        Map<Integer, List<PK>> mapKeys = new HashedMap(dbModShardRange.size());
+        Map<Integer, List<PK>> mapKeys = new HashMap(dbModShardRange.size());
         for (int i = start; i < end; i++) {
             PK id = numbers.get(i);
             int mod = Math.abs(id.hashCode()) % RANGE_SIZE;

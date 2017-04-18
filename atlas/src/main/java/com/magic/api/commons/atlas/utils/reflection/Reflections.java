@@ -1,12 +1,10 @@
 package com.magic.api.commons.atlas.utils.reflection;
 
 import com.magic.api.commons.ApiLogger;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.*;
-import java.util.Map;
 
 /**
  * 反射工具类.
@@ -288,19 +286,4 @@ public class Reflections {
         return createdInstance;
     }
 
-    public static Object createInstance(String className, Map properties) {
-        Class<?> clazz = createClass(className);
-        Object result = null;
-        try {
-            result = clazz.newInstance();
-            BeanUtils.populate(result, properties);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 }

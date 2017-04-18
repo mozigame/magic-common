@@ -222,5 +222,4 @@ public interface BaseDao<T, PK extends Serializable> {
      */
     Page<T> find(Page<T> page, final String ql, final Object... values) throws Exception;
 
-    Page<T> find(final Page<T> page, final List<PropertyFilter> filters) throws Exception;
 }

@@ -3,7 +3,6 @@ package com.magic.api.commons.atlas.core.mybatis;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.magic.api.commons.atlas.core.BaseDao;
-import com.magic.api.commons.atlas.core.PropertyFilter;
 import com.magic.api.commons.atlas.utils.reflection.Reflections;
 import com.magic.api.commons.model.Page;
 import org.apache.commons.collections.map.HashedMap;
@@ -443,11 +442,6 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         page.setResult((List<T>) getSqlSession().selectList(sqlMapNamespace + "." + ql, values, rowBounds));
         page.setTotalCount(findCount(ql + "Count", values));
         return page;
-    }
-
-    public Page<T> find(Page<T> page, List<PropertyFilter> filters)
-            throws Exception {
-        return null;
     }
 
 

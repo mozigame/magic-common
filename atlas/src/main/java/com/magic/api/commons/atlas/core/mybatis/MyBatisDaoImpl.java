@@ -42,6 +42,8 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
 
     public static final String POSTFIX_INSERT = "insert";
 
+    public static final String POSTFIX_INSERT_BATCH = "insertBatch";
+
     public static final String POSTFIX_UPDATE = "update";
 
     public static final String POSTFIX_DELETE = "delete";
@@ -172,6 +174,14 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         for (T e : entitys)
             pkList.add(null == e ? null : insert(e));
         return pkList;
+    }
+
+    @Override
+    public PK insertBatch(List<T> entitys) throws Exception {
+        int num = getSqlSession().insert(
+                sqlMapNamespace + "." + POSTFIX_INSERT_BATCH, entitys);
+        return pkClass.getConstructor(String.class).newInstance(
+                String.valueOf(num));
     }
 
     @Override
@@ -440,15 +450,17 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return null;
     }
 
+
+    /** more databases process ***/
     /**
-     * 开启线程池
+     * init thread pool
      */
     private void initExecutor() {
         SELECT_EXEC = Executors.newFixedThreadPool(CPU_CORE_NUMBER);
     }
 
     /**
-     * 关闭线程池
+     * close thread pool
      */
     private void closeExecutor() {
         SELECT_EXEC.shutdown();

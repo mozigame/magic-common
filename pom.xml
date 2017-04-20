@@ -18,9 +18,10 @@
         <module>codis</module>
         <module>config</module>
         <module>model</module>
-        <module>uuid</module>
         <module>message</module>
         <module>atlas</module>
+        <module>poi</module>
+        <module>resource-auth</module>
     </modules>
 
     <properties>
@@ -59,12 +60,6 @@
                 <artifactId>http</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
-            <!-- uuid -->
-            <dependency>
-                <groupId>com.magic.commons</groupId>
-                <artifactId>uuid</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
             <!--codis工具-->
             <dependency>
                 <groupId>com.magic.commons</groupId>
@@ -99,6 +94,18 @@
             <dependency>
                 <groupId>com.magic.commons</groupId>
                 <artifactId>atlas</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <!-- poi -->
+            <dependency>
+                <groupId>com.magic.commons</groupId>
+                <artifactId>poi</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <!-- resource-auth -->
+            <dependency>
+                <groupId>com.magic.commons</groupId>
+                <artifactId>resource-auth</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <!--MySQL驱动-->
@@ -293,22 +300,6 @@
                 <groupId>com.github.sgroschupf</groupId>
                 <artifactId>zkclient</artifactId>
                 <version>0.1</version>
-            </dependency>
-            <!--发号器-->
-            <dependency>
-                <groupId>com.magic.tools</groupId>
-                <artifactId>uuid</artifactId>
-                <version>1.0.2</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>guava</artifactId>
-                        <groupId>com.google.guava</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>commons-lang</artifactId>
-                        <groupId>commons-lang</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

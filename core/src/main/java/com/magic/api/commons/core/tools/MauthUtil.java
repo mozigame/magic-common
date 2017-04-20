@@ -1,8 +1,9 @@
-package com.magic.api.commons.tools;
+package com.magic.api.commons.core.tools;
 
-import com.magic.api.commons.exception.CommonException;
 import com.magic.api.commons.ApiLogger;
-import com.magic.api.commons.tools.encrypt.AESEncrypter;
+import com.magic.api.commons.core.exception.CommonException;
+import com.magic.api.commons.core.exception.ExceptionFactor;
+import com.magic.api.commons.core.tools.encrypt.AESEncrypter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -71,7 +72,7 @@ public class MauthUtil {
                 return getNewUid(ss[1]);
             default:
                 ApiLogger.error("Authorization header error, stringMauth:" + stringMauth);
-                throw new CommonException("认证失败");
+                throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
         }
         //TODO 校验之后快过期 是否重新下发Mauth
     }
@@ -112,19 +113,21 @@ public class MauthUtil {
             long time = NumberUtils.toLong(timeAndUid[0], 0);
             long now = System.currentTimeMillis();
             if (now - time > EXPIRES_TIME) {
-                throw new CommonException("token expires.");
+                throw ExceptionFactor.TOKEN_EXPIRES_EXCEPTION;
             }
             int uid = NumberUtils.toInt(timeAndUid[1], 0);
             if (uid <= 0) {
-                throw new CommonException("invalid uid.");
+                throw ExceptionFactor.INVALID_UID_EXCEPTION;
             }
             authModel.setUid(uid);
             authModel.setAppId(1);
             authModel.setExpiringDate(time);
             return authModel;
+        } catch (CommonException e) {
+            throw e;
         } catch (Exception e) {
             ApiLogger.error("认证发生异常,header:" + stringMauth, e);
-            throw new CommonException("认证失败");
+            throw ExceptionFactor.DEFAULT_EXCEPTION;
         }
     }
 
@@ -141,20 +144,22 @@ public class MauthUtil {
             long time = NumberUtils.toLong(timeAndUidAndAppId[0], 0);
             long now = System.currentTimeMillis();
             if (now - time > EXPIRES_TIME) {
-                throw new CommonException("token expires.");
+                throw ExceptionFactor.TOKEN_EXPIRES_EXCEPTION;
             }
             int uid = NumberUtils.toInt(timeAndUidAndAppId[1], 0);
             if (uid <= 0) {
-                throw new CommonException("invalid uid.");
+                throw ExceptionFactor.INVALID_UID_EXCEPTION;
             }
             int appId = NumberUtils.toInt(timeAndUidAndAppId[2], 0);
             authModel.setUid(uid);
             authModel.setAppId(appId);
             authModel.setExpiringDate(time);
             return authModel;
+        } catch (CommonException e) {
+            throw e;
         } catch (Exception e) {
             ApiLogger.error("认证发生异常,header:" + stringMauth, e);
-            throw new CommonException("认证失败");
+            throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
         }
     }
 

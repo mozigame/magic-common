@@ -1,7 +1,4 @@
 package com.magic.api.commons.tools;
-
-
-
 import com.magic.api.commons.ApiLogger;
 
 import java.io.InputStream;

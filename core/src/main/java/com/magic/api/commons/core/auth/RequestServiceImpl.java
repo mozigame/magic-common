@@ -2,9 +2,8 @@ package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.core.exception.ExceptionFactor;
-import com.magic.api.commons.exception.CommonException;
 import com.magic.api.commons.ApiLogger;
-import com.magic.api.commons.tools.HeaderUtil;
+import com.magic.api.commons.core.tools.HeaderUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

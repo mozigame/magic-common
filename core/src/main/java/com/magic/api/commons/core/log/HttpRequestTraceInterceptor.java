@@ -6,7 +6,7 @@ import com.magic.api.commons.core.context.Client;
 import com.magic.api.commons.core.context.ClientVersion;
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.ApiLogger;
-import com.magic.api.commons.tools.HeaderUtil;
+import com.magic.api.commons.core.tools.HeaderUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 

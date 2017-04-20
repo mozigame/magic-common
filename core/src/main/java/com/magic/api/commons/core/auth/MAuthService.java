@@ -2,8 +2,8 @@ package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.core.log.RequestLogRecord;
-import com.magic.api.commons.tools.HeaderUtil;
-import com.magic.api.commons.tools.MauthUtil;
+import com.magic.api.commons.core.tools.HeaderUtil;
+import com.magic.api.commons.core.tools.MauthUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 

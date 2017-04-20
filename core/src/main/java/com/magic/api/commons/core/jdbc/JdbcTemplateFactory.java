@@ -3,7 +3,7 @@ package com.magic.api.commons.core.jdbc;
 import com.alibaba.fastjson.JSON;
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.ApiLogger;
-import com.magic.api.commons.tools.HashUtil;
+import com.magic.api.commons.core.tools.HashUtil;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;

@@ -1,4 +1,4 @@
-package com.magic.api.commons.core.auth.encrypt;
+package com.magic.api.commons.core.tools.encrypt;
 
 
 public class Encrypter {

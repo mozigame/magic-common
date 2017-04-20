@@ -514,6 +514,12 @@
                 <artifactId>libthrift</artifactId>
                 <version>0.10.0</version>
             </dependency>
+            <!-- tongtu-->
+            <dependency>
+                <groupId>com.magic.tongtu</groupId>
+                <artifactId>magic-tongtu-api</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

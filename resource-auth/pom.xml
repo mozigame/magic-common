@@ -20,6 +20,11 @@
             <groupId>com.magic.commons</groupId>
             <artifactId>log</artifactId>
         </dependency>
+        <!-- dubbo -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+        </dependency>
         <!--Spring-->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -77,6 +82,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.magic.tongtu</groupId>
+            <artifactId>magic-tongtu-api</artifactId>
         </dependency>
     </dependencies>
 

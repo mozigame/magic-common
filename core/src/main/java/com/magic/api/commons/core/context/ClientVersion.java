@@ -2,7 +2,6 @@ package com.magic.api.commons.core.context;
 
 
 import com.magic.api.commons.core.exception.ExceptionFactor;
-import com.magic.api.commons.exception.CommonException;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.utils.StringUtils;
 

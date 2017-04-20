@@ -101,4 +101,23 @@ public class ExceptionFactor {
      */
     public static final CommonException LOCK_EXCEPTION = new CommonException(
             CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 13, HttpServletResponse.SC_OK, "lock exception!", "锁异常!");
+
+    /**
+     * H_RESOURCE_ID 为空
+     */
+    public static final CommonException SOURCE_ID_HEADER_IS_EMPTY_EXCEPTION = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 14, HttpServletResponse.SC_OK, "Resource ID header is empty.", "Resource ID header 为空.!");
+
+    /**
+     * H_RESOURCE_URL 为空
+     */
+    public static final CommonException SOURCE_URL_HEADER_IS_EMPTY_EXCEPTION = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 15, HttpServletResponse.SC_OK, "Resource ID header is empty.", "Resource ID header 为空.!");
+
+    /**
+     * 用户不具备资源操作权限
+     */
+    public static final CommonException USER_NO_RESOURCE_ACCESS_EXCEPTION = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 16, HttpServletResponse.SC_OK, "user has no right of resource!", "用户不具备当前资源操作权限!");
+
 }

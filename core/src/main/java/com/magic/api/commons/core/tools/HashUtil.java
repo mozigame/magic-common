@@ -1,4 +1,4 @@
-package com.magic.api.commons.tools;
+package com.magic.api.commons.core.tools;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.magic.api.commons.core.auth.encrypt;
+package com.magic.api.commons.core.tools.encrypt;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -17,6 +17,8 @@ import java.util.Map;
 public class AESEncrypter {
 
     private static String aesKeyStr = "NGQxNmUwMjM4M2Y0MTI2MTM3NDI0Y2MxMjA1N2IyNDM=";
+
+    public static String NEW_AES_KEY_STR = "MzJCRTI2RkUxRUY3NDgxRUE3MDRCMzhFNzZENjhDNkM=";
 
     private SecretKey aesKey;
 

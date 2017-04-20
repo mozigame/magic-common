@@ -1,4 +1,4 @@
-package com.magic.api.commons.tools;
+package com.magic.api.commons.core.tools;
 
 import com.magic.api.commons.ApiLogger;
 import org.apache.commons.lang3.StringUtils;
@@ -91,6 +91,16 @@ public class HeaderUtil {
      * 用户在Session中Key
      */
     public static final String HEADER_PASSWORD = "H-P";
+
+    /**
+     * header中的资源ID
+     */
+    public static final String HEADER_SOURCE_ID = "H_SOURCE_ID";
+
+    /**
+     * header中的资源url
+     */
+    public static final String HEADER_SOURCE_URL = "H_SOURCE_URL";
 
     /**
      * 分隔符
@@ -255,5 +265,25 @@ public class HeaderUtil {
     public static String getHeaderPassword(HttpServletRequest request) {
         String password = request.getHeader(HEADER_PASSWORD);
         return StringUtils.isNoneBlank(password) ? password : null;
+    }
+
+    /**
+     * 获取header中的资源ID
+     * @param request   HttpServletRequest
+     * @return 资源ID
+     */
+    public static String getHeaderResourceId(HttpServletRequest request){
+        String resourceId = request.getHeader(HEADER_SOURCE_ID);
+        return StringUtils.isNoneBlank(resourceId) ? resourceId : null;
+    }
+
+    /**
+     * 获取header中的资源URL
+     * @param request   HttpServletRequest
+     * @return 资源URL
+     */
+    public static String getHeaderResourceUrl(HttpServletRequest request){
+        String resourceUrl = request.getHeader(HEADER_SOURCE_URL);
+        return StringUtils.isNoneBlank(resourceUrl) ? resourceUrl : null;
     }
 }

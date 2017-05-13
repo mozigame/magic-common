@@ -1,5 +1,7 @@
 package com.magic.api.commons.tools;
 
+import com.magic.api.commons.ApiLogger;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -177,4 +179,39 @@ public class CommonDateParseUtil extends org.apache.commons.lang3.time.DateForma
         return format(date, pattern);
     }
 
+    /**
+     * 获取指定时间后n个月的时间
+     * @param dateStr
+     * @param month
+     * @return
+     */
+    public static String getDateAfterMonth(String dateStr,int month) {
+        SimpleDateFormat sdf = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS);
+        try {
+            Date now  = sdf.parse(dateStr);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.MONTH, month);
+            return sdf.format(calendar.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 时间转时间戳
+     * @param dateStr
+     * @param format
+     * @return
+     */
+    public static long date2TimeStamp(String dateStr,String format){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return sdf.parse(dateStr).getTime();
+        } catch (Exception e) {
+            ApiLogger.error(String.format("convert str date to long error,date is %s",dateStr),e);
+        }
+        return 0;
+    }
 }

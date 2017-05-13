@@ -1,6 +1,7 @@
 package com.magic.api.commons.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -12,70 +13,70 @@ public class PageBean<Z> implements Serializable {
     /**
      * 当前页
      */
-    private int page;
+    private Integer page;
 
     /**
      * 每页数据量
      */
-    private int count;
+    private Integer count;
 
     /**
      * 总数据量
      */
-    private long total;
+    private Long total;
 
     /**
      * 当前游标
      */
-    private long cursor;
+    private Long cursor;
 
     /**
      * 下一个游标 没有-1
      */
-    private long next;
+    private Long next;
 
     /**
      * 分页数据
      */
     private Collection<Z> list;
 
-    public int getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         this.page = page;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
-    public long getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(long total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 
-    public long getCursor() {
+    public Long getCursor() {
         return cursor;
     }
 
-    public void setCursor(long cursor) {
+    public void setCursor(Long cursor) {
         this.cursor = cursor;
     }
 
-    public long getNext() {
+    public Long getNext() {
         return next;
     }
 
-    public void setNext(long next) {
+    public void setNext(Long next) {
         this.next = next;
     }
 
@@ -84,6 +85,9 @@ public class PageBean<Z> implements Serializable {
     }
 
     public void setList(Collection<Z> list) {
+        if (list == null){
+            list = new ArrayList<>();
+        }
         this.list = list;
     }
 }

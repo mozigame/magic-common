@@ -28,13 +28,13 @@ public class Client implements Serializable {
     private String deviceId;
 
     /**
-     * 平台ID 5实惠 5实惠 100-10000SaaS渠道
+     * 平台ID
      */
     private int appId;
 
     public enum ClientType {
 
-        IOS(1, "ios"), ANDROID(2, "android");
+        IOS(1, "ios"), ANDROID(2, "android"), WEB(10, "web");
 
         private int value;
 

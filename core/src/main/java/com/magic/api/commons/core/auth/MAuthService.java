@@ -2,8 +2,10 @@ package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.core.log.RequestLogRecord;
+import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 
@@ -35,17 +37,17 @@ public class MAuthService implements AuthService {
     }
 
     @Override
-    public Integer auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
+    public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         String authHeader = HeaderUtil.getMauth(request);
         MauthUtil.AuthModel authModel = MauthUtil.getUid(authHeader);
+        String newToken = authModel.getNewToken();
+        if(StringUtils.isNoneEmpty(newToken)) {
+            CookieUtil.setMauth(response, newToken);
+        }
         RequestContext requestContext = RequestContext.getRequestContext();
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
-        int uid = authModel.getUid();
-        /*int appId = authModel.getAppId();
-        requestContext.getClient().setAppId(appId);
-        requestLogRecord.setUserType(RequestLogRecord.UserType.zb);*/
+        long uid = authModel.getUid();
         requestLogRecord.setAuth(Access.AccessType.COMMON.getName());
-        /*requestLogRecord.setAppid(appId);*/
         return uid;
     }
 

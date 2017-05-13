@@ -2,6 +2,7 @@ package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.core.log.RequestLogRecord;
+import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -12,16 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 公开暴露接口认证
+ * H5或PHP Cookie认证方式
+ * @author zj
  */
 @Component
-@Order(90)
-public class PublicAuthService implements AuthService {
-
-    /**
-     * 游客用户ID
-     */
-    public static final long GUEST_UID = 1;
+@Order(30)
+public class CookieAuthService implements AuthService {
 
     /**
      * 当前验证方式 是否支持本次请求
@@ -33,8 +30,11 @@ public class PublicAuthService implements AuthService {
     @Override
     public boolean supports(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         Access access = handlerMethod.getMethod().getAnnotation(Access.class);
-        return null != access && Access.AccessType.PUBLIC == access.type();
-
+        if (null == access || null == access.type() || Access.AccessType.COOKIE != access.type()) {
+            return false;
+        }
+        String mauth = HeaderUtil.getMauth(request);
+        return MauthUtil.canAuth(mauth);
     }
 
     /**
@@ -46,14 +46,19 @@ public class PublicAuthService implements AuthService {
      */
     @Override
     public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
+        String authHeader = HeaderUtil.getMauth(request);
+        String deviceId = HeaderUtil.getDeviceId(request);
+        MauthUtil.AuthModel authModel = MauthUtil.getUid(authHeader, deviceId);
+        String newToken = authModel.getNewToken();
+        if(StringUtils.isNoneEmpty(newToken)) {
+            CookieUtil.setMauth(response, newToken);
+        }
         RequestContext requestContext = RequestContext.getRequestContext();
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
-        requestLogRecord.setAuth(Access.AccessType.PUBLIC.getName());
-        String authHeader = HeaderUtil.getMauth(request);
-        if (StringUtils.isEmpty(authHeader)) {
-            return GUEST_UID;
-        }
-        MauthUtil.AuthModel authModel = MauthUtil.getUid(authHeader);
-        return authModel.getUid();
+        long uid = authModel.getUid();
+        requestContext.getClient().setDeviceId(deviceId);
+        requestLogRecord.setAuth(Access.AccessType.COOKIE.getName());
+        return uid;
     }
+
 }

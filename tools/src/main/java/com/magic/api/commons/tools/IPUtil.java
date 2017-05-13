@@ -236,4 +236,63 @@ public class IPUtil {
     public static int ipToInt(final String addr) {
         return ipToInt(addr, false);
     }
+
+    /**
+     * ip转化为数字，并且保持ip的大小顺序不变
+     * 如果ip不合法则返回0
+     *
+     * @param addr  ip地址
+     * @return  数字
+     */
+    public static long ipToLong(final String addr){
+        final String[] addressBytes = addr.split("\\.");
+        int length = addressBytes.length;
+        if (length < 3) {
+            return 0;
+        }
+        long ip = 0;
+        try {
+            for (int i = 0; i < 3; i++) {
+                ip <<= 8;
+                ip |= Integer.parseInt(addressBytes[i]);
+            }
+            ip <<= 8;
+            if (length == 3) {
+                ip |= 0;
+            } else {
+                ip |= Integer.parseInt(addressBytes[3]);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Warn ipToLong address is wrong: address=" + addr, e);
+        }
+
+        return ip;
+    }
+
+    /**
+     * 将数字转化成ip
+     *
+     * @param ip
+     * @return
+     */
+    public static String intToIp(int ip){
+        return ((ip >> 24) & 0xFF) + "."
+                + ((ip >> 16) & 0xFF) + "."
+                + ((ip >> 8) & 0xFF) + "."
+                + (ip & 0xFF);
+    }
+
+    /**
+     * 将数字转化成ip
+     *
+     * @param ip
+     * @return
+     */
+    public static String longToIp(long ip){
+        return ((ip >> 24) & 0xFF) + "."
+                + ((ip >> 16) & 0xFF) + "."
+                + ((ip >> 8) & 0xFF) + "."
+                + (ip & 0xFF);
+    }
+
 }

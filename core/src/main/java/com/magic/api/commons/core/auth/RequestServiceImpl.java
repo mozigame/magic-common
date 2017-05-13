@@ -44,7 +44,7 @@ public class RequestServiceImpl implements RequestService, ApplicationContextAwa
     @Override
     public boolean request(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         AuthService authService = getAuth(request, response, handlerMethod);
-        Integer uid = authService.auth(request, response, handlerMethod);
+        Long uid = authService.auth(request, response, handlerMethod);
         if (null != uid && 0 < uid) {
             RequestContext requestContext = RequestContext.getRequestContext();
             requestContext.setUid(uid);

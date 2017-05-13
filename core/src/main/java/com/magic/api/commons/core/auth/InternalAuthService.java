@@ -79,8 +79,8 @@ public class InternalAuthService implements AuthService {
      * @return  用户ID
      */
     @Override
-    public Integer auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
-        int uid = NumberUtils.toInt(HeaderUtil.getzbUid(request));
+    public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
+        long uid = NumberUtils.toLong(HeaderUtil.getzbUid(request));
         if (0 >= uid) {
             throw ExceptionFactor.MATRIX_UID_HEADER_IS_EMPTY_EXCEPTION;
         }

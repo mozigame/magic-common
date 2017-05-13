@@ -27,5 +27,5 @@ public interface AuthService {
      * @param handlerMethod     HandlerMethod
      * @return  用户ID
      */
-    Integer auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod);
+    Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod);
 }

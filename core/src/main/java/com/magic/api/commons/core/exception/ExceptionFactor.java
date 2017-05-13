@@ -45,7 +45,7 @@ public class ExceptionFactor {
      * Matrix uid header 为空
      */
     public static final CommonException MATRIX_UID_HEADER_IS_EMPTY_EXCEPTION = new CommonException(
-            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 4, HttpServletResponse.SC_OK, "Matrix uid header is empty.", "Matrix uid header 为空.!");
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 4, HttpServletResponse.SC_OK, "Matrix uid header is empty.", "Matrix uid header 为空!");
 
     /**
      * 非法版本规则
@@ -63,7 +63,7 @@ public class ExceptionFactor {
      * 找不到验证token
      */
     public static final CommonException MISS_AUTH_PROPERTIES_EXCEPTION = new CommonException(
-            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 7, HttpServletResponse.SC_OK, "miss auth properties!", "找不到权限控制配置文件c!");
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 7, HttpServletResponse.SC_OK, "miss auth properties!", "找不到权限控制配置文件!");
 
     /**
      * 未知环境变量
@@ -106,18 +106,35 @@ public class ExceptionFactor {
      * H_RESOURCE_ID 为空
      */
     public static final CommonException SOURCE_ID_HEADER_IS_EMPTY_EXCEPTION = new CommonException(
-            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 14, HttpServletResponse.SC_OK, "Resource ID header is empty.", "Resource ID header 为空.!");
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 14, HttpServletResponse.SC_OK, "Resource ID header is empty.", "Resource ID header 为空!");
 
     /**
      * H_RESOURCE_URL 为空
      */
     public static final CommonException SOURCE_URL_HEADER_IS_EMPTY_EXCEPTION = new CommonException(
-            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 15, HttpServletResponse.SC_OK, "Resource ID header is empty.", "Resource ID header 为空.!");
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 15, HttpServletResponse.SC_OK, "Resource URL header is empty.", "Resource URL header 为空!");
 
     /**
      * 用户不具备资源操作权限
      */
     public static final CommonException USER_NO_RESOURCE_ACCESS_EXCEPTION = new CommonException(
             CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 16, HttpServletResponse.SC_OK, "user has no right of resource!", "用户不具备当前资源操作权限!");
+
+    /**
+     * 引擎网关服务ip非法
+     */
+    public static final CommonException ILLEGAL_THRIFTSERVER_IP = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 17, HttpServletResponse.SC_OK, "engine gw server ip illedge!", "引擎网关服务ip非法!");
+
+    /**
+     * 引擎网关服务文件丢失
+     */
+    public static final CommonException MISS_THRIFT_PROPERTIES_EXCEPTION = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 18, HttpServletResponse.SC_OK, "miss thrift properties!", "找不到引擎网管thrift配置文件!");
+    /**
+     * 初始化thrift client异常
+     */
+    public static final CommonException INIT_ENGINEGW_CLIENT_EXCEPTION = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 19, HttpServletResponse.SC_OK, "init thrift client error!", "初始化引擎网关client发生异常!");
 
 }

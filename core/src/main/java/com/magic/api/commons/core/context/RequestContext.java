@@ -32,6 +32,11 @@ public class RequestContext {
     private long uid;
 
     /**
+     * 用户token
+     */
+    private String token;
+
+    /**
      * 客户端相关数据
      */
     private Client client = new Client();
@@ -161,5 +166,16 @@ public class RequestContext {
 
     public Map<String, Object> getExt() {
         return ext;
+    }
+
+    public String getToken() {
+        if (token == null){
+            return "";
+        }
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -563,7 +563,13 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     @Override
     public Page<T> find(final Page<T> page, final String ql, final String[] paramNames, final Object[] values) throws Exception {
         RowBounds rowBounds = new RowBounds((page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
-        page.setResult((List<T>) getSqlSession().selectList(sqlMapNamespace + "." + ql, values, rowBounds));
+        HashMap<String, Object> map = new HashMap<>();
+        if (paramNames != null){
+            for (int i = 0; i < paramNames.length; i++) {
+                map.put(paramNames[i], values[i]);
+            }
+        }
+        page.setResult((List<T>) getSqlSession().selectList(sqlMapNamespace + "." + ql, map.size() > 0 ? map : values, rowBounds));
         page.setTotalCount(findCount(ql + "Count", paramNames, values));
         return page;
     }

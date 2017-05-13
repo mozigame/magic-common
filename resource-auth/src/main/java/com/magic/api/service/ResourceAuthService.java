@@ -8,6 +8,7 @@ import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.core.exception.CommonException;
 import com.magic.api.commons.core.exception.ExceptionFactor;
 import com.magic.api.commons.core.log.RequestLogRecord;
+import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
 import com.magic.tongtu.service.AuthoriseService;
@@ -44,13 +45,17 @@ public class ResourceAuthService implements AuthService{
     }
 
     @Override
-    public Integer auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
+    public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         String authHeader = HeaderUtil.getMauth(request);
         MauthUtil.AuthModel authModel = MauthUtil.getUid(authHeader);
+        String newToken = authModel.getNewToken();
+        if(StringUtils.isNoneEmpty(newToken)) {
+            CookieUtil.setMauth(response, newToken);
+        }
         RequestContext requestContext = RequestContext.getRequestContext();
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         requestLogRecord.setAuth(Access.AccessType.RESOURCE.getName());
-        int uid = authModel.getUid();
+        long uid = authModel.getUid();
         String resourceId = HeaderUtil.getHeaderResourceId(request);
         String resourceUrl = HeaderUtil.getHeaderResourceUrl(request);
         //权限验证
@@ -65,12 +70,12 @@ public class ResourceAuthService implements AuthService{
      * @param resourceId
      * @param resourceUrl
      */
-    private void verifyAccess(int uid, String resourceId, String resourceUrl) {
+    private void verifyAccess(long uid, String resourceId, String resourceUrl) {
         if (StringUtils.isEmpty(resourceId)){
             throw ExceptionFactor.SOURCE_ID_HEADER_IS_EMPTY_EXCEPTION;
         }
         if (StringUtils.isEmpty(resourceUrl)){
-            throw ExceptionFactor.SOURCE_ID_HEADER_IS_EMPTY_EXCEPTION;
+            throw ExceptionFactor.SOURCE_URL_HEADER_IS_EMPTY_EXCEPTION;
         }
         boolean hasRight = false;
         try {

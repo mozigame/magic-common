@@ -27,7 +27,8 @@ public @interface Access {
         PUBLIC(2, "public"),
         INTERNAL(3, "internal"),
         DESIGNATE(4, "designate"),
-        RESOURCE(5, "resource");
+        RESOURCE(5, "resource"),
+        COOKIE(6, "cookie");
         //TODO 添加指定IP访问验证
         private int type;
         private String name;

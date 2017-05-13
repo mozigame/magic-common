@@ -49,6 +49,9 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         requestLogRecord.setNdeviceid(clientNdeviceId);
         client.setDeviceId(clientNdeviceId);
         requestLogRecord.setUserAgent(HeaderUtil.getUserAgent(request));
+        //token
+        String mauth = HeaderUtil.getMauth(request);
+        requestContext.setToken(mauth);
         return true;
     }
 

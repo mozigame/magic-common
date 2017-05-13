@@ -103,6 +103,11 @@ public class HeaderUtil {
     public static final String HEADER_SOURCE_URL = "H_SOURCE_URL";
 
     /**
+     * header connection
+     */
+    public static final String HEADER_CONNECTION = "Connection";
+
+    /**
      * 分隔符
      */
     public static final String SPLIT = "-";
@@ -285,5 +290,30 @@ public class HeaderUtil {
     public static String getHeaderResourceUrl(HttpServletRequest request){
         String resourceUrl = request.getHeader(HEADER_SOURCE_URL);
         return StringUtils.isNoneBlank(resourceUrl) ? resourceUrl : null;
+    }
+
+
+    /**
+     * 获取header中的Connection
+     * @param request
+     * @return  connection值
+     */
+    public static String getHeaderConnection(HttpServletRequest request){
+        String connection = request.getHeader(HEADER_CONNECTION);
+        return StringUtils.isNoneBlank(connection) ? connection : null;
+    }
+
+    /**
+     * 获取设备号 app-userAgent-protocol-headerConnection
+     * @param request
+     * @return
+     */
+    public static String getDeviceId(HttpServletRequest request) {
+        int appId = getAppId(request);
+        String userAgent = getUserAgent(request);
+        String protocol = request.getProtocol();
+        String headerConnection = getHeaderConnection(request);
+        String deviceId = appId + SPLIT + userAgent + SPLIT + protocol + SPLIT + headerConnection;
+        return MD5Util.saltPassword(appId, deviceId);
     }
 }

@@ -9,17 +9,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>poi</artifactId>
+    <artifactId>engine-gw</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.magic.commons</groupId>
             <artifactId>log</artifactId>
         </dependency>
-        <!-- poi -->
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <groupId>com.magic.commons</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.magic.commons</groupId>
+            <artifactId>tools</artifactId>
+        </dependency>
+        <!-- thrift -->
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
         </dependency>
     </dependencies>
 

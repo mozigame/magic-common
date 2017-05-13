@@ -18,9 +18,14 @@ public class MauthUtil {
     private static final AESEncrypter NEW_ENCRYPTER = AESEncrypter.getInstance(AESEncrypter.NEW_AES_KEY_STR);
 
     /**
-     * 三天+五分钟
+     * 一天+五分钟
      */
-    private static final long EXPIRES_TIME = 1000 * 60 * 60 * 24 * 3 + 1000 * 60 * 5;
+    private static final long EXPIRES_TIME = 86700000;
+
+    /**
+     * 2小时内
+     */
+    private static final long NEW_TOKEN_TIME = 7200000;
 
     /**
      * 老mauth长度
@@ -61,6 +66,23 @@ public class MauthUtil {
     /**
      * 获取用户ID
      * @param stringMauth StringMauth
+     * @param deviceId 设备号
+     * @return  用户ID
+     */
+    public static final AuthModel getUid(String stringMauth, String deviceId) {
+        String[] ss = stringMauth.split(" ");
+        switch (ss.length) {
+            case NEW_MAUTH_LENTH :
+                return getNewUid(ss[1], deviceId);
+            default:
+                ApiLogger.error("Authorization header error, stringMauth:" + stringMauth);
+                throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
+        }
+    }
+
+    /**
+     * 获取用户ID
+     * @param stringMauth StringMauth
      * @return  用户ID
      */
     public static final AuthModel getUid(String stringMauth) {
@@ -74,7 +96,6 @@ public class MauthUtil {
                 ApiLogger.error("Authorization header error, stringMauth:" + stringMauth);
                 throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
         }
-        //TODO 校验之后快过期 是否重新下发Mauth
     }
 
     /**
@@ -84,8 +105,20 @@ public class MauthUtil {
      * @param expiringDate  mauth过期的绝对值    毫秒
      * @return  Mauth
      */
-    public static final String create(int uid, int appId, long expiringDate) {
+    public static final String create(long uid, int appId, long expiringDate) {
         String tempMauth = expiringDate + CONNECT + uid + CONNECT + appId;
+        return MAUTH_HEAD + SPACES + NEW_ENCRYPTER.encrypt(tempMauth) + SPACES + MAUTH_HEAD;
+    }
+
+    /**
+     * 生成Mauth
+     * @param uid
+     * @param deviceId
+     * @return
+     */
+    public static final String create(long uid, String deviceId){
+        long expiringDate = System.currentTimeMillis();
+        String tempMauth = expiringDate + CONNECT + uid + CONNECT + deviceId;
         return MAUTH_HEAD + SPACES + NEW_ENCRYPTER.encrypt(tempMauth) + SPACES + MAUTH_HEAD;
     }
 
@@ -95,7 +128,7 @@ public class MauthUtil {
      * @param expiringDate  mauth过期的绝对值    毫秒
      * @return  Mauth
      */
-    public static final String createOld(int uid, long expiringDate) {
+    public static final String createOld(long uid, long expiringDate) {
         String tempMauth = expiringDate + CONNECT + uid;
         return MAUTH_HEAD + SPACES + ENCRYPTER.encrypt(tempMauth);
     }
@@ -115,12 +148,14 @@ public class MauthUtil {
             if (now - time > EXPIRES_TIME) {
                 throw ExceptionFactor.TOKEN_EXPIRES_EXCEPTION;
             }
-            int uid = NumberUtils.toInt(timeAndUid[1], 0);
+            long uid = NumberUtils.toLong(timeAndUid[1], 0);
             if (uid <= 0) {
                 throw ExceptionFactor.INVALID_UID_EXCEPTION;
             }
+            if (now - time >= EXPIRES_TIME - NEW_TOKEN_TIME){
+                authModel.setNewToken(createOld(uid, now));
+            }
             authModel.setUid(uid);
-            authModel.setAppId(1);
             authModel.setExpiringDate(time);
             return authModel;
         } catch (CommonException e) {
@@ -140,19 +175,61 @@ public class MauthUtil {
         AuthModel authModel = new AuthModel();
         try {
             String decryptedString = NEW_ENCRYPTER.decryptAsString(stringMauth);
-            String[] timeAndUidAndAppId = decryptedString.split(CONNECT);
-            long time = NumberUtils.toLong(timeAndUidAndAppId[0], 0);
+            String[] timeAndUidAndDeviceId = decryptedString.split(CONNECT);
+            long time = NumberUtils.toLong(timeAndUidAndDeviceId[0], 0);
             long now = System.currentTimeMillis();
             if (now - time > EXPIRES_TIME) {
                 throw ExceptionFactor.TOKEN_EXPIRES_EXCEPTION;
             }
-            int uid = NumberUtils.toInt(timeAndUidAndAppId[1], 0);
+            long uid = NumberUtils.toLong(timeAndUidAndDeviceId[1], 0);
             if (uid <= 0) {
                 throw ExceptionFactor.INVALID_UID_EXCEPTION;
             }
-            int appId = NumberUtils.toInt(timeAndUidAndAppId[2], 0);
+            String deviceId = timeAndUidAndDeviceId[2];
+            if (now - time >= EXPIRES_TIME - NEW_TOKEN_TIME){
+                authModel.setNewToken(create(uid, deviceId));
+            }
             authModel.setUid(uid);
-            authModel.setAppId(appId);
+            authModel.setDeviceId(deviceId);
+            authModel.setExpiringDate(time);
+            return authModel;
+        } catch (CommonException e) {
+            throw e;
+        } catch (Exception e) {
+            ApiLogger.error("认证发生异常,header:" + stringMauth, e);
+            throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
+        }
+    }
+
+    /**
+     * 获取用户ID
+     * @param stringMauth StringMauth
+     * @param deviceId 计算生成的deviceId，需与token中的deviceId进行校验
+     * @return  用户ID
+     */
+    public static final AuthModel getNewUid(String stringMauth, String deviceId) {
+        AuthModel authModel = new AuthModel();
+        try {
+            String decryptedString = NEW_ENCRYPTER.decryptAsString(stringMauth);
+            String[] timeAndUidAndDeviceId = decryptedString.split(CONNECT);
+            long time = NumberUtils.toLong(timeAndUidAndDeviceId[0], 0);
+            long now = System.currentTimeMillis();
+            if (now - time > EXPIRES_TIME) {
+                throw ExceptionFactor.TOKEN_EXPIRES_EXCEPTION;
+            }
+            long uid = NumberUtils.toLong(timeAndUidAndDeviceId[1], 0);
+            if (uid <= 0) {
+                throw ExceptionFactor.INVALID_UID_EXCEPTION;
+            }
+            String nDeviceId = timeAndUidAndDeviceId[2];
+            if (StringUtils.isEmpty(nDeviceId) || !nDeviceId.equals(deviceId)){
+                throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
+            }
+            if (now - time >= EXPIRES_TIME - NEW_TOKEN_TIME){
+                authModel.setNewToken(create(uid, deviceId));
+            }
+            authModel.setUid(uid);
+            authModel.setDeviceId(nDeviceId);
             authModel.setExpiringDate(time);
             return authModel;
         } catch (CommonException e) {
@@ -168,32 +245,37 @@ public class MauthUtil {
         /**
          * 用户ID
          */
-        private int uid;
+        private long uid;
 
         /**
-         * 平台标示 1实惠
+         * 设备号
          */
-        private int appId;
+        private String deviceId;
 
         /**
          * mauth过期时间
          */
         private long expiringDate;
 
-        public int getUid() {
+        /**
+         * 新token，当当前token快过期时，重新下发新的token
+         */
+        private String newToken;
+
+        public long getUid() {
             return uid;
         }
 
-        public void setUid(int uid) {
+        public void setUid(long uid) {
             this.uid = uid;
         }
 
-        public int getAppId() {
-            return appId;
+        public String getDeviceId() {
+            return deviceId;
         }
 
-        public void setAppId(int appId) {
-            this.appId = appId;
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
         }
 
         public long getExpiringDate() {
@@ -202,6 +284,14 @@ public class MauthUtil {
 
         public void setExpiringDate(long expiringDate) {
             this.expiringDate = expiringDate;
+        }
+
+        public String getNewToken() {
+            return newToken;
+        }
+
+        public void setNewToken(String newToken) {
+            this.newToken = newToken;
         }
     }
 

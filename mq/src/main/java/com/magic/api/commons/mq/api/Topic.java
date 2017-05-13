@@ -6,30 +6,17 @@ package com.magic.api.commons.mq.api;
  */
 public enum Topic {
 
-    TEST_TOPIC("zb_test_topic"),
-
-    USER_REGISTER_SUCCESS("zb_user_register_success"),
-    USER_LOGIN_SUCCESS("zb_user_login_success"),
-    USER_UPDATE_SUCCESS("zb_user_update_success"),
-    LEVEL_IMPROVE_PERSON_INFO("zb_user_level_improve_info"),
-    LEVEL_BOUND_PHONE("zb_user_level_bound_phone"),
-    LEVEL_LOGIN_EVERYDAY("zb_user_level_login_everyday"),
-    LEVEL_SHARE_LIVE("zb_user_level_share_live"),
-    LEVEL_STAY_TIME("zb_user_level_stay_time"),
-    LEVEL_ATTENTION_SENDMSG("zb_user_level_attention_send"),
-    LEVEL_SPEND_BEAN("zb_user_level_spend_bean"),
-
-    ORDER_CREATE("zb_order_create"),
-    SEND_GIFT("zb_send_gift"),
-
-    FUELROD_SEND_SUCCESS("zb_fuelrod_send_success"),
-    LIVE_START("zb_live_start"),
-    UPDATE_LIVE_STATUS("zb_update_live_status"),
-    LIVE_FINISHED("zb_live_finished"),
-    UPDATE_LIVE_HASVIDEO("zb_update_live_hasvideo"),
-
-    TASK_RECEIVE("zb_task_receive"),
-    TASK_REJECT("zb_task_reject");
+    PASSPORT_LOGIN_SUCCESS("passport_login_success"),
+    PASSPORT_PASSWORD_RESET_SUCCESS("passport_password_reset_success"),
+    PASSPORT_LOGOUT_SUCCESS("passport_logout_success"),
+    USER_INFO_MODIFY_SUCCESS("user_info_modify_success"),
+    MEMBER_REGISTER_SUCCESS("member_register_success"),
+    MEMBER_LOGIN_SUCCESS("member_login_success"),
+    MEMBER_LOGOUT_SUCCESS("member_logout_success"),
+    USER_LOGIN_SUCCESS("user_login_success"),//用户登录成功
+    USER_LOGOUT_SUCCESS("user_logout_success"),//用户注销成功
+    AGENT_REVIEW_HISTORY("agent_review_history"),//代理审核操作历史
+    AGENT_ADD_SUCCESS("agent_add_success");//代理新增成功
 
     private String value;
 

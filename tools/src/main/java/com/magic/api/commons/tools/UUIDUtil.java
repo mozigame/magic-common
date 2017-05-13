@@ -20,4 +20,12 @@ public final class UUIDUtil {
     public static final String getUUID() {
         return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
+
+    /**
+     * 生成code   12位
+     * @return
+     */
+    public static final String getCode(){
+        return RC4.encry_RC4_string("100000", UUID.randomUUID().toString().replaceAll("-","")).toUpperCase();
+    }
 }

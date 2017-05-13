@@ -21,6 +21,7 @@ public interface BaseDao<T, PK extends Serializable> {
      * 保存新增对象列表.
      */
     List<PK> insert(final List<T> entitys) throws Exception;
+
     /**
      * 保存新增对象列表.
      */
@@ -34,12 +35,12 @@ public interface BaseDao<T, PK extends Serializable> {
     /**
      * 保存新增对象.
      */
-    Object insert(final String ql, final Object... values) throws Exception;
+    PK insert(final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 保存新增对象.根据id获取数据源
      */
-    Object insert(final PK id, final String ql, final Object... values) throws Exception;
+    PK insert(final PK id, final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 删除对象.
@@ -88,14 +89,14 @@ public interface BaseDao<T, PK extends Serializable> {
      *
      * @param values 删除语句中的参数.
      */
-    int delete(final String ql, final Object... values) throws Exception;
+    int delete(final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 删除对象.根据id获取数据源
      *
      * @param values 删除语句中的参数.
      */
-    int delete(final PK id, final String ql, final Object... values) throws Exception;
+    int delete(final PK id, final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 保存修改的对象.
@@ -124,12 +125,12 @@ public interface BaseDao<T, PK extends Serializable> {
     /**
      * 保存修改的对象.根据id获取数据源
      */
-    int update(final String ql, final Object... values) throws Exception;
+    int update(final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 保存修改的对象.根据id获取数据源
      */
-    int update(final String ql, PK id, final Object... values) throws Exception;
+    int update(final String ql, PK id, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 按id获取对象.
@@ -144,12 +145,12 @@ public interface BaseDao<T, PK extends Serializable> {
     /**
      * 获取对象.
      */
-    Object get(final String ql, final Object... values) throws Exception;
+    Object get(final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 获取对象.根据id获取数据源
      */
-    Object get(final String ql, PK id, final Object... values) throws Exception;
+    Object get(final String ql, PK id, final String[] paramNames, final Object[] values) throws Exception;
 
 
     /**
@@ -185,6 +186,7 @@ public interface BaseDao<T, PK extends Serializable> {
      */
     long findCount(T entity) throws Exception;
 
+
     /**
      * 查询对象列表.
      *
@@ -192,7 +194,26 @@ public interface BaseDao<T, PK extends Serializable> {
      * @param values 参数对象.
      * @return List<X> 查询结果对象列表
      */
-    <X> List<X> find(final String hql, final Object... values) throws Exception;
+    List findObj(final String hql, final String[] paramNames, final Object[] values) throws Exception;
+
+
+    /**
+     * 查询对象列表.
+     *
+     * @param hql
+     * @param values 参数对象.
+     * @return List<X> 查询结果对象列表
+     */
+    <X> List<X> find(final String hql, final String[] paramNames, final Object[] values) throws Exception;
+
+    /**
+     * 查询自定义对象列表.
+     *
+     * @param hql
+     * @param values 参数对象.
+     * @return List<X> 查询结果对象列表
+     */
+    <X> List<X> findCustom(final String hql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 查询对象列表的数量.
@@ -201,7 +222,7 @@ public interface BaseDao<T, PK extends Serializable> {
      * @param values 参数对象.
      * @return 查询结果的数量
      */
-    long findCount(final String ql, final Object... values) throws Exception;
+    long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
      * 分页查询对象列表.
@@ -220,6 +241,6 @@ public interface BaseDao<T, PK extends Serializable> {
      * @param values 查询参数对象.
      * @return Page<T> 查询结果的分页对象
      */
-    Page<T> find(Page<T> page, final String ql, final Object... values) throws Exception;
+    Page<T> find(Page<T> page, final String ql, final String[] paramNames, final Object[] values) throws Exception;
 
 }

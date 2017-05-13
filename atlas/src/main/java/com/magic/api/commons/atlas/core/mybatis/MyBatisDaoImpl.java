@@ -5,16 +5,21 @@ import com.google.common.collect.Maps;
 import com.magic.api.commons.atlas.core.BaseDao;
 import com.magic.api.commons.atlas.utils.reflection.Reflections;
 import com.magic.api.commons.model.Page;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.javassist.*;
+import org.apache.ibatis.javassist.bytecode.CodeAttribute;
+import org.apache.ibatis.javassist.bytecode.LocalVariableAttribute;
+import org.apache.ibatis.javassist.bytecode.MethodInfo;
+import org.apache.ibatis.reflection.*;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -192,31 +197,52 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return pkList;
     }
 
-    public Object insert(final String ql, final Object... values) throws Exception {
-        int num = 0;
+    @Override
+    public PK insert(final String ql, final String[] paramNames, final Object[] values) throws Exception {
+        long num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession().insert(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length == 1)
+                num = getSqlSession().insert(sqlMapNamespace + "." + ql, values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    HashMap<String, Object> map = new HashMap<>();
+                    for (int i = 0; i < paramNames.length; i++) {
+                        map.put(paramNames[i], values[i]);
+                    }
+                    num = getSqlSession().insert(sqlMapNamespace + "." + ql, map);
+                }
             }
+
         } else {
             num += getSqlSession().insert(sqlMapNamespace + "." + ql);
         }
-        return num;
+        return pkClass.getConstructor(String.class).newInstance(
+                String.valueOf(num));
     }
 
     @Override
-    public Object insert(PK id, String ql, Object... values) throws Exception {
+    public PK insert(PK id, String ql, final String[] paramNames, final Object[] values) throws Exception {
+
         int num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession(id).insert(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length <= 1)
+                num = getSqlSession(id).insert(sqlMapNamespace + "." + ql,
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    num = getSqlSession(id).insert(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
         } else {
             num += getSqlSession(id).insert(sqlMapNamespace + "." + ql);
         }
-        return num;
+        return pkClass.getConstructor(String.class).newInstance(
+                String.valueOf(num));
     }
 
     public int delete(T entity) throws Exception {
@@ -261,13 +287,22 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return rowsEffected;
     }
 
-    public int delete(final String ql, final Object... values) throws Exception {
+    @Override
+    public int delete(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         int num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession().delete(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length == 1)
+                num = getSqlSession().delete(sqlMapNamespace + "." + ql,
+                        values[0]);
+            else if (paramNames != null && paramNames.length == values.length) {
+                HashMap<String, Object> map = new HashMap<>();
+                for (int i = 0; i < paramNames.length; i++) {
+                    map.put(paramNames[i], values[i]);
+                }
+                num = getSqlSession().delete(sqlMapNamespace + "." + ql,
+                        map);
             }
+
         } else {
             num += getSqlSession().delete(sqlMapNamespace + "." + ql);
         }
@@ -275,12 +310,22 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     }
 
     @Override
-    public int delete(PK id, String ql, Object... values) throws Exception {
+    public int delete(PK id, String ql, final String[] paramNames, final Object[] values) throws Exception {
+
         int num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession(id).delete(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length <= 1)
+                num = getSqlSession(id).delete(sqlMapNamespace + "." + ql,
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    num = getSqlSession(id).delete(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
         } else {
             num += getSqlSession(id).delete(sqlMapNamespace + "." + ql);
@@ -312,12 +357,22 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return rowsEffected;
     }
 
-    public int update(final String ql, final Object... values) throws Exception {
+    @Override
+    public int update(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         int num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession().update(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length <= 1)
+                num = getSqlSession().update(sqlMapNamespace + "." + ql,
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    num = getSqlSession().update(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
         } else {
             num += getSqlSession().update(sqlMapNamespace + "." + ql);
@@ -326,12 +381,21 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     }
 
     @Override
-    public int update(String ql, PK id, Object... values) throws Exception {
+    public int update(String ql, PK id, final String[] paramNames, final Object[] values) throws Exception {
         int num = 0;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                num += getSqlSession(id).update(sqlMapNamespace + "." + ql,
-                        values[i]);
+            if (values.length <= 1)
+                num = getSqlSession(id).update(sqlMapNamespace + "." + ql,
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    num = getSqlSession(id).update(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
         } else {
             num += getSqlSession(id).update(sqlMapNamespace + "." + ql);
@@ -354,12 +418,22 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
                     sqlMapNamespace + "." + POSTFIX_GET, id);
     }
 
-    public Object get(final String ql, final Object... values) throws Exception {
+    @Override
+    public Object get(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         if (values != null) {
             Object result = null;
-            for (int i = 0; i < values.length; i++) {
+            if (values.length <= 1)
                 result = getSqlSession().selectOne(sqlMapNamespace + "." + ql,
-                        values[i]);
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession().selectOne(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
             return result;
         } else {
@@ -368,12 +442,21 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     }
 
     @Override
-    public Object get(String ql, PK id, Object... values) throws Exception {
+    public Object get(String ql, PK id, final String[] paramNames, final Object[] values) throws Exception {
         if (values != null) {
             Object result = null;
-            for (int i = 0; i < values.length; i++) {
+            if (values.length <= 1)
                 result = getSqlSession(id).selectOne(sqlMapNamespace + "." + ql,
-                        values[i]);
+                        values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession(id).selectOne(sqlMapNamespace + "." + ql,
+                            param);
+                }
             }
             return result;
         } else {
@@ -406,41 +489,103 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECT, entity).size();
     }
 
-    public List<T> find(final String ql, final Object... values) throws Exception {
+    @Override
+    public List findObj(String hql, final String[] paramNames, final Object[] values) throws Exception {
+
         if (values != null) {
-            List<T> result = null;
-            for (int i = 0; i < values.length; i++) {
-                result = getSqlSession().selectList(sqlMapNamespace + "." + ql, values[i]);
+            List result = null;
+            if (values.length <= 1)
+                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession().selectList(sqlMapNamespace + "." + hql, param);
+                }
             }
             return result;
         } else {
-            return getSqlSession().selectList(sqlMapNamespace + "." + ql);
+            return getSqlSession().selectList(sqlMapNamespace + "." + hql);
         }
     }
 
-    public long findCount(final String ql, final Object... values) throws Exception {
+    @Override
+    public <X> List<X> find(String hql, String[] paramNames, Object[] values) throws Exception {
+        if (values != null) {
+            List<X> result = null;
+            if (values.length <= 1)
+                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession().selectList(sqlMapNamespace + "." + hql, param);
+                }
+            }
+            return result;
+        } else {
+            return getSqlSession().selectList(sqlMapNamespace + "." + hql);
+        }
+    }
+
+    @Override
+    public <X> List<X> findCustom(String hql, String[] paramNames, Object[] values) throws Exception {
+        if (values != null) {
+            List<X> result = null;
+            if (values.length <= 1)
+                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession().selectList(sqlMapNamespace + "." + hql, param);
+                }
+            }
+            return result;
+        } else {
+            return getSqlSession().selectList(sqlMapNamespace + "." + hql);
+        }
+    }
+
+    @Override
+    public long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         Long result = null;
         if (values != null) {
-            for (int i = 0; i < values.length; i++) {
-                result = (Long) getSqlSession().selectOne(sqlMapNamespace + "." + ql, values[i]);
+            if (values.length <= 1)
+                result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, values[0]);
+            else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, param);
+                }
             }
         } else {
-            result = (Long) getSqlSession().selectOne(sqlMapNamespace + "." + ql);
+            result = getSqlSession().selectOne(sqlMapNamespace + "." + ql);
         }
-        return result.longValue();
+        return result;
     }
 
     public Page<T> find(final Page<T> page, final T entity) throws Exception {
         RowBounds rowBounds = new RowBounds((page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setResult((List<T>) getSqlSession().selectList(sqlMapNamespace + "." + POSTFIX_SELECTPAGE, entity, rowBounds));
-        page.setTotalCount(findCount(POSTFIX_SELECTPAGE_COUNT, entity));
+        page.setTotalCount(findCount(POSTFIX_SELECTPAGE_COUNT, null, new Object[]{entity}));
         return page;
     }
 
-    public Page<T> find(final Page<T> page, final String ql, final Object... values) throws Exception {
+    @Override
+    public Page<T> find(final Page<T> page, final String ql, final String[] paramNames, final Object[] values) throws Exception {
         RowBounds rowBounds = new RowBounds((page.getPageNo() - 1) * page.getPageSize(), page.getPageSize());
         page.setResult((List<T>) getSqlSession().selectList(sqlMapNamespace + "." + ql, values, rowBounds));
-        page.setTotalCount(findCount(ql + "Count", values));
+        page.setTotalCount(findCount(ql + "Count", paramNames, values));
         return page;
     }
 
@@ -551,4 +696,26 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
         return results;
     }
 
+
+    public static String[] getAllParamaterName(Method method)
+            throws NotFoundException {
+        Class<?> clazz = method.getDeclaringClass();
+        ClassPool pool = ClassPool.getDefault();
+        CtClass clz = pool.get(clazz.getName());
+        CtClass[] params = new CtClass[method.getParameterTypes().length];
+        for (int i = 0; i < method.getParameterTypes().length; i++) {
+            params[i] = pool.getCtClass(method.getParameterTypes()[i].getName());
+        }
+        CtMethod cm = clz.getDeclaredMethod(method.getName(), params);
+        MethodInfo methodInfo = cm.getMethodInfo();
+        CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+        LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute
+                .getAttribute(LocalVariableAttribute.tag);
+        int pos = Modifier.isStatic(cm.getModifiers()) ? 0 : 1;
+        String[] paramNames = new String[cm.getParameterTypes().length];
+        for (int i = 0; i < paramNames.length; i++) {
+            paramNames[i] = attr.variableName(i + pos);
+        }
+        return paramNames;
+    }
 }

@@ -575,12 +575,13 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         Long result = null;
         if (values != null) {
-            if (values.length <= 1) {
+            if (paramNames == null && values !=null) {
+                return getSqlSession().selectOne(sqlMapNamespace + "." + ql, values[0]);
+            } else if (values.length <= 1) {
                 HashMap<Object, Object> map = new HashMap<>();
                 map.put(paramNames[0], values[0]);
                 result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, map);
-            }
-            else {
+            } else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
                     for (int i = 0; i < values.length; i++) {

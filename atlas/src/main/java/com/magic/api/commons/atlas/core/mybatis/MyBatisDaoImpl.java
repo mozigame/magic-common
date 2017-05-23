@@ -361,9 +361,12 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public int update(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         int num = 0;
         if (values != null) {
-            if (values.length <= 1)
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
                 num = getSqlSession().update(sqlMapNamespace + "." + ql,
-                        values[0]);
+                        map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -384,9 +387,12 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public int update(String ql, PK id, final String[] paramNames, final Object[] values) throws Exception {
         int num = 0;
         if (values != null) {
-            if (values.length <= 1)
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
                 num = getSqlSession(id).update(sqlMapNamespace + "." + ql,
-                        values[0]);
+                        map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -422,9 +428,12 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public Object get(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         if (values != null) {
             Object result = null;
-            if (values.length <= 1)
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
                 result = getSqlSession().selectOne(sqlMapNamespace + "." + ql,
-                        values[0]);
+                        map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -445,9 +454,12 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public Object get(String ql, PK id, final String[] paramNames, final Object[] values) throws Exception {
         if (values != null) {
             Object result = null;
-            if (values.length <= 1)
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
                 result = getSqlSession(id).selectOne(sqlMapNamespace + "." + ql,
-                        values[0]);
+                        map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -494,8 +506,11 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
 
         if (values != null) {
             List result = null;
-            if (values.length <= 1)
-                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, values[0]);
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
+                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -515,8 +530,11 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public <X> List<X> find(String hql, String[] paramNames, Object[] values) throws Exception {
         if (values != null) {
             List<X> result = null;
-            if (values.length <= 1)
-                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, values[0]);
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
+                result = getSqlSession().selectList(sqlMapNamespace + "." + hql, map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();
@@ -557,8 +575,11 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         Long result = null;
         if (values != null) {
-            if (values.length <= 1)
-                result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, values[0]);
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
+                result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, map);
+            }
             else {
                 if (paramNames != null && paramNames.length == values.length) {
                     final Map<String, Object> param = new TreeMap<>();

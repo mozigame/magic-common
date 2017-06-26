@@ -27,6 +27,12 @@ public interface BaseDao<T, PK extends Serializable> {
      */
     PK insertBatch(final List<T> entitys) throws Exception;
 
+
+    /**
+     * 保存新增对象列表.
+     */
+    List<PK> insertBatch(final List<T> entitys, final List<PK> ids) throws Exception;
+
     /**
      * 保存新增对象列表.根据id获取数据源
      */

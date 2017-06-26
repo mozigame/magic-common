@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.magic.api.commons.atlas.core.BaseDao;
 import com.magic.api.commons.atlas.utils.reflection.Reflections;
 import com.magic.api.commons.model.Page;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.javassist.*;
@@ -144,13 +145,17 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
      * @Des 获取跨实例存储数据的sqlSessionTemplate
      */
     public SqlSession getSqlSession(final PK id) {
-        int mod = Math.abs(id.hashCode()) % RANGE_SIZE;
+        int mod = getMod(id);
         for (Map.Entry<Integer, Integer> entry : dbModShardRange.entrySet()) {
             if (mod >= entry.getKey() && mod <= entry.getValue()) {
                 return shardSqlSessionTemplates.get(entry.getKey());
             }
         }
         return null;
+    }
+
+    public int getMod(final PK id) {
+        return Math.abs(id.hashCode()) % RANGE_SIZE;
     }
 
 
@@ -186,6 +191,32 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
                 sqlMapNamespace + "." + POSTFIX_INSERT_BATCH, entitys);
         return pkClass.getConstructor(String.class).newInstance(
                 String.valueOf(num));
+    }
+
+    @Override
+    public List<PK> insertBatch(final List<T> entitys, final List<PK> ids) throws Exception {
+        Map<Integer, List<T>> mapEntities = new HashedMap();
+        if (ids != null && ids.size() > 0) {
+            for (int i = 0;i < ids.size();i++) {
+                int mod = getMod(ids.get(i));
+                for (Map.Entry<Integer, Integer> entry : dbModShardRange.entrySet()) {
+                    if (mod >= entry.getKey() && mod <= entry.getValue()) {
+                        if (mapEntities.get(entry.getKey()) == null) {
+                            List<T> list = new ArrayList<T>();
+                            list.add(entitys.get(i));
+                            mapEntities.put(entry.getKey(), list);
+                        } else {
+                            mapEntities.get(entry.getKey()).add(entitys.get(i));
+                        }
+                    }
+                }
+            }
+            for (Map.Entry<Integer, List<T>> entry : mapEntities.entrySet()) {
+                shardSqlSessionTemplates.get(entry.getKey()).insert(sqlMapNamespace + "." + POSTFIX_INSERT_BATCH, entry.getValue());
+            }
+            return ids;
+        }
+        return null;
     }
 
     @Override
@@ -575,9 +606,10 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     public long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         Long result = null;
         if (values != null) {
-            if (paramNames == null && values !=null) {
+            if (paramNames == null) {
                 return getSqlSession().selectOne(sqlMapNamespace + "." + ql, values[0]);
-            } else if (values.length <= 1) {
+            }
+            if (values.length <= 1) {
                 HashMap<Object, Object> map = new HashMap<>();
                 map.put(paramNames[0], values[0]);
                 result = getSqlSession().selectOne(sqlMapNamespace + "." + ql, map);
@@ -667,10 +699,11 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
             int mod = Math.abs(id.hashCode()) % RANGE_SIZE;
             for (Map.Entry<Integer, Integer> entry : dbModShardRange.entrySet()) {
                 if (mod >= entry.getKey() && mod <= entry.getValue()) {
-                    if (mapKeys.get(entry.getKey()) != null)
+                    if (mapKeys.get(entry.getKey()) != null) {
                         mapKeys.get(entry.getKey()).add(id);
-                    else
+                    } else {
                         mapKeys.put(entry.getKey(), Lists.newArrayList(id));
+                    }
                 }
             }
         }

@@ -603,6 +603,29 @@ public class MyBatisDaoImpl<T, PK extends Serializable> implements BaseDao<T, PK
     }
 
     @Override
+    public <X> List<X> findCustom(String hql, PK id, String[] paramNames, Object[] values) throws Exception {
+        if (values != null) {
+            List<X> result = null;
+            if (values.length <= 1) {
+                HashMap<Object, Object> map = new HashMap<>();
+                map.put(paramNames[0], values[0]);
+                result = getSqlSession(id).selectList(sqlMapNamespace + "." + hql, map);
+            } else {
+                if (paramNames != null && paramNames.length == values.length) {
+                    final Map<String, Object> param = new TreeMap<>();
+                    for (int i = 0; i < values.length; i++) {
+                        param.put(paramNames[i], values[i]);
+                    }
+                    result = getSqlSession(id).selectList(sqlMapNamespace + "." + hql, param);
+                }
+            }
+            return result;
+        } else {
+            return getSqlSession().selectList(sqlMapNamespace + "." + hql);
+        }
+    }
+
+    @Override
     public long findCount(final String ql, final String[] paramNames, final Object[] values) throws Exception {
         Long result = null;
         if (values != null) {

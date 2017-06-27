@@ -222,6 +222,16 @@ public interface BaseDao<T, PK extends Serializable> {
     <X> List<X> findCustom(final String hql, final String[] paramNames, final Object[] values) throws Exception;
 
     /**
+     * 查询自定义对象列表.
+     *
+     * @param hql
+     * @param values 参数对象.
+     * @return List<X> 查询结果对象列表
+     */
+    <X> List<X> findCustom(final String hql, PK id, final String[] paramNames, final Object[] values) throws Exception;
+
+
+    /**
      * 查询对象列表的数量.
      *
      * @param ql

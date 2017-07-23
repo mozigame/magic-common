@@ -7,6 +7,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -24,6 +29,7 @@ public class DateUtil extends DateUtils {
     public static final String formatDefaultTimestamp = "yyyy-MM-dd HH:mm:ss";
     public static final String format_yyyy_MM_dd_HHmm = "yyyy-MM-dd HH:mm";
     public static final String format_yyyyMMddHHmm = "yyyyMMddHHmm";
+    public static final String format_yyyyMMddHH = "yyyyMMddHH";
     public static final String format_yyyyMMdd = "yyyyMMdd";
     public static final String format_yyyyMM = "yyyyMM";
     public static final String format_yyyy_MM_dd = "yyyy-MM-dd";
@@ -515,5 +521,11 @@ public class DateUtil extends DateUtils {
         calendar.set(Calendar.SECOND, 0);
         long l = calendar.getTimeInMillis() - System.currentTimeMillis();
         return (int) l / 1000;
+    }
+
+    public static void main(String[] args) {
+        LocalDateTime now = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.of("America/New_York"));
+        String string = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        System.out.println(string);
     }
 }

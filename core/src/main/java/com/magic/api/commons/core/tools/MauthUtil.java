@@ -50,7 +50,7 @@ public class MauthUtil {
     /**
      * mauth拼接符
      */
-    private static final String SPACES = " ";
+    private static final String SPACES = "-";
 
 
     /**
@@ -70,7 +70,7 @@ public class MauthUtil {
      * @return  用户ID
      */
     public static final AuthModel getUid(String stringMauth, String deviceId) {
-        String[] ss = stringMauth.split(" ");
+        String[] ss = stringMauth.split(SPACES);
         switch (ss.length) {
             case NEW_MAUTH_LENTH :
                 return getNewUid(ss[1], deviceId);
@@ -86,7 +86,7 @@ public class MauthUtil {
      * @return  用户ID
      */
     public static final AuthModel getUid(String stringMauth) {
-        String[] ss = stringMauth.split(" ");
+        String[] ss = stringMauth.split(SPACES);
         switch (ss.length) {
             case OLD_MAUTH_LENTH :
                 return getOldUid(ss[1]);
@@ -96,6 +96,14 @@ public class MauthUtil {
                 ApiLogger.error("Authorization header error, stringMauth:" + stringMauth);
                 throw ExceptionFactor.AUTH_FAILED_EXCEPTION;
         }
+    }
+
+    public static void main(String[] args) {
+        String auth = "MAuth-d96cec0100342a4d52699aff87eca8b32e9bae5d7696f1e6299ad272f4e996f1";
+        AuthModel uid = getUid(auth);
+        System.out.println(uid.getUid());
+        String a = createOld(105094, System.currentTimeMillis() + 31536000000l);
+        System.out.println(a);
     }
 
     /**
@@ -143,6 +151,7 @@ public class MauthUtil {
         try {
             String decryptedString = ENCRYPTER.decryptAsString(stringMauth);
             String[] timeAndUid = decryptedString.split(CONNECT);
+            System.out.println(decryptedString);
             long time = NumberUtils.toLong(timeAndUid[0], 0);
             long now = System.currentTimeMillis();
             if (now - time > EXPIRES_TIME) {

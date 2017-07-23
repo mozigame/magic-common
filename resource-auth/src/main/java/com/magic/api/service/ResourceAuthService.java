@@ -11,7 +11,7 @@ import com.magic.api.commons.core.log.RequestLogRecord;
 import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
-import com.magic.tongtu.service.AuthoriseService;
+import com.magic.owner.service.AuthoriseService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -53,13 +53,14 @@ public class ResourceAuthService implements AuthService{
             CookieUtil.setMauth(response, newToken);
         }
         RequestContext requestContext = RequestContext.getRequestContext();
+        String deviceId = HeaderUtil.getDeviceId(request);
+        requestContext.getClient().setDeviceId(deviceId);
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         requestLogRecord.setAuth(Access.AccessType.RESOURCE.getName());
         long uid = authModel.getUid();
-        String resourceId = HeaderUtil.getHeaderResourceId(request);
-        String resourceUrl = HeaderUtil.getHeaderResourceUrl(request);
+        String resourceUrl = request.getRequestURI();
         //权限验证
-        verifyAccess(uid, resourceId, resourceUrl);
+        verifyAccess(uid, resourceUrl);
         return uid;
     }
 
@@ -67,23 +68,18 @@ public class ResourceAuthService implements AuthService{
      * 权限验证
      *
      * @param uid
-     * @param resourceId
      * @param resourceUrl
      */
-    private void verifyAccess(long uid, String resourceId, String resourceUrl) {
-        if (StringUtils.isEmpty(resourceId)){
-            throw ExceptionFactor.SOURCE_ID_HEADER_IS_EMPTY_EXCEPTION;
-        }
-        if (StringUtils.isEmpty(resourceUrl)){
-            throw ExceptionFactor.SOURCE_URL_HEADER_IS_EMPTY_EXCEPTION;
-        }
-        boolean hasRight = false;
+    private void verifyAccess(long uid, String resourceUrl) {
+
+        boolean hasRight;
         try {
-            hasRight = authoriseService.cherUserPerm(uid, Long.parseLong(resourceId), resourceUrl);
+            hasRight = authoriseService.cherUserPerm(uid, resourceUrl);
         }catch (CommonException e){
             throw e;
         } catch (Exception e){
-            ApiLogger.error("invoke right access dubbo error.", e);
+            ApiLogger.error(String.format("invoke right access dubbo error. msg: %s", e.getMessage()));
+            hasRight = true;
         }
         if (!hasRight){
             throw ExceptionFactor.USER_NO_RESOURCE_ACCESS_EXCEPTION;

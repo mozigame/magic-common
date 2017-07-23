@@ -84,6 +84,9 @@ public class InternalAuthService implements AuthService {
         if (0 >= uid) {
             throw ExceptionFactor.MATRIX_UID_HEADER_IS_EMPTY_EXCEPTION;
         }
+        RequestContext requestContext = RequestContext.getRequestContext();
+        String deviceId = HeaderUtil.getDeviceId(request);
+        requestContext.getClient().setDeviceId(deviceId);
         RequestLogRecord requestLogRecord = RequestContext.getRequestContext().getRequestLogRecord();
         requestLogRecord.setAuth(Access.AccessType.INTERNAL.getName());
         return uid;

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>engine-gw</artifactId>
+    <artifactId>kafka</artifactId>
 
     <dependencies>
         <dependency>
@@ -18,20 +18,12 @@
         </dependency>
         <dependency>
             <groupId>com.magic.commons</groupId>
-            <artifactId>core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.magic.commons</groupId>
             <artifactId>tools</artifactId>
         </dependency>
-        <!-- thrift -->
         <dependency>
-            <groupId>org.apache.thrift</groupId>
-            <artifactId>libthrift</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.11.0.0</version>
         </dependency>
     </dependencies>
 

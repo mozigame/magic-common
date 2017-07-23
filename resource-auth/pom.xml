@@ -84,7 +84,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.magic.tongtu</groupId>
+            <groupId>com.magic</groupId>
             <artifactId>magic-tongtu-api</artifactId>
         </dependency>
     </dependencies>

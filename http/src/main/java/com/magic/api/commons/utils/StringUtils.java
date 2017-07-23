@@ -187,6 +187,26 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
         return sb.toString();
     }
 
+    /**
+     * @param strings
+     * @return
+     * @Doc String[] 转成String,eg：new String[]{"aaa","bbb","ccc"} 转成aaa,bbb,ccc
+     */
+    public static String arrayToStrSplit(String[] strings) {
+        if (strings == null || strings.length <= 0) {
+            return "";
+        }
+        StringBuffer sb = new StringBuffer();
+        for (String s : strings) {
+            sb.append(s).append(",");
+        }
+        String str = "";
+        if (sb.length() > 0) {
+            str = sb.substring(0, sb.length() - 1);
+        }
+        return str;
+    }
+
 //    public static boolean hasText(String str) {
 //        return org.springframework.util.StringUtils.hasText(str);
 //    }

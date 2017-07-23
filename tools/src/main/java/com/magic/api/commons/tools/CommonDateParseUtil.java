@@ -6,6 +6,10 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,6 +61,18 @@ public class CommonDateParseUtil extends org.apache.commons.lang3.time.DateForma
         SimpleDateFormat sdf = new SimpleDateFormat(formatStr);
         strDate = sdf.format(date);
         return strDate;
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param timestamp
+     * @param formatStr
+     * @return
+     */
+    public static String date2string(long timestamp, String formatStr){
+        LocalDateTime now = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.of("America/New_York"));
+        return now.format(DateTimeFormatter.ofPattern(formatStr));
     }
 
     /**

@@ -39,6 +39,7 @@ public class MAuthService implements AuthService {
     @Override
     public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         String authHeader = HeaderUtil.getMauth(request);
+        String deviceId = HeaderUtil.getDeviceId(request);
         MauthUtil.AuthModel authModel = MauthUtil.getUid(authHeader);
         String newToken = authModel.getNewToken();
         if(StringUtils.isNoneEmpty(newToken)) {
@@ -47,6 +48,7 @@ public class MAuthService implements AuthService {
         RequestContext requestContext = RequestContext.getRequestContext();
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         long uid = authModel.getUid();
+        requestContext.getClient().setDeviceId(deviceId);
         requestLogRecord.setAuth(Access.AccessType.COMMON.getName());
         return uid;
     }

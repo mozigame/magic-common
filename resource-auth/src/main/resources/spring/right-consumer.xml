@@ -5,5 +5,5 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans        http://www.springframework.org/schema/beans/spring-beans.xsd        http://code.alibabatech.com/schema/dubbo        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
     <!-- 权限验证接口 -->
-    <dubbo:reference id="authoriseService" interface="com.magic.tongtu.service.AuthoriseService" init="true" timeout="3000" retries="0" check="false" />
+    <dubbo:reference id="authoriseService" interface="com.magic.owner.service.AuthoriseService" init="true" timeout="3000" retries="0" check="false" />
 </beans>

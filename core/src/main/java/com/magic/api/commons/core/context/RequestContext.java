@@ -47,6 +47,11 @@ public class RequestContext {
     private String ip;
 
     /**
+     * 请求来源网址
+     */
+    private String origin;
+
+    /**
      * 请求日志记录
      */
     private RequestLogRecord requestLogRecord = new RequestLogRecord();
@@ -177,5 +182,13 @@ public class RequestContext {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 }

@@ -81,6 +81,11 @@ public class HeaderUtil {
      */
     public static final String REFERER = "Referer";
 
+    /**
+     * REFERER
+     */
+    public static final String ORIGIN = "Origin";
+
 
     /**
      * header中用户名
@@ -315,5 +320,18 @@ public class HeaderUtil {
         String headerConnection = getHeaderConnection(request);
         String deviceId = appId + SPLIT + userAgent + SPLIT + protocol + SPLIT + headerConnection;
         return MD5Util.saltPassword(appId, deviceId);
+    }
+
+    /**
+     * 获取请求来源
+     * @param request
+     * @return
+     */
+    public static String getOrigin(HttpServletRequest request) {
+        String origin = request.getHeader(ORIGIN);
+        if (StringUtils.isEmpty(origin)){
+            origin = request.getHeader(REFERER);
+        }
+        return origin;
     }
 }

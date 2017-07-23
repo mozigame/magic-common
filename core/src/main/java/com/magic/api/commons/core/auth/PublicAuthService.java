@@ -47,6 +47,8 @@ public class PublicAuthService implements AuthService {
     @Override
     public Long auth(HttpServletRequest request, HttpServletResponse response, HandlerMethod handlerMethod) {
         RequestContext requestContext = RequestContext.getRequestContext();
+        String deviceId = HeaderUtil.getDeviceId(request);
+        requestContext.getClient().setDeviceId(deviceId);
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         requestLogRecord.setAuth(Access.AccessType.PUBLIC.getName());
         String authHeader = HeaderUtil.getMauth(request);

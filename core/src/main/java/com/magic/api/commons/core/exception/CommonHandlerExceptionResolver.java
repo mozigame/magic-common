@@ -43,7 +43,7 @@ public class CommonHandlerExceptionResolver implements HandlerExceptionResolver 
             assembleError(httpServletResponse, ExceptionFactor.DEFAULT_EXCEPTION.getEnMessage(), ExceptionFactor.DEFAULT_EXCEPTION.getCnMessage()
                     , ExceptionFactor.DEFAULT_EXCEPTION.getErrorCode(), ExceptionFactor.DEFAULT_EXCEPTION.getHttpCode(), map);
         }
-        ApiLogger.error(e.getMessage(), e);
+        ApiLogger.error(e.getMessage());
         FastJsonJsonView fastJsonJsonView = new FastJsonJsonView();
         fastJsonJsonView.setAttributesMap(map);
         ModelAndView modelAndView = new ModelAndView();

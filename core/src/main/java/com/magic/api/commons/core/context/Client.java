@@ -34,7 +34,7 @@ public class Client implements Serializable {
 
     public enum ClientType {
 
-        IOS(1, "ios"), ANDROID(2, "android"), WEB(10, "web");
+        IOS(1, "ios"), ANDROID(2, "android"), WEB(10, "web"), KD(20, "kd");
 
         private int value;
 

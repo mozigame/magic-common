@@ -25,6 +25,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         Client client = requestContext.getClient();
         requestContext.setRequest(request);
         requestContext.setResponse(response);
+        requestContext.setOrigin(HeaderUtil.getOrigin(request));
         RequestLogRecord requestLogRecord = requestContext.getRequestLogRecord();
         requestLogRecord.setStartTime(System.currentTimeMillis());
         requestLogRecord.setRequestId(HeaderUtil.getRequestId(request));
@@ -74,7 +75,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         if (HttpServletResponse.SC_OK == responseStatus) {
             ApiLogger.requset(requestLogRecord.toString());
         } else {
-            ApiLogger.error(requestLogRecord.toString());
+            ApiLogger.info(requestLogRecord.toString());
         }
         super.afterCompletion(request, response, handler, ex);
         RequestContext.clearRequestContext();

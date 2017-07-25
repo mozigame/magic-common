@@ -137,4 +137,10 @@ public class ExceptionFactor {
     public static final CommonException INIT_ENGINEGW_CLIENT_EXCEPTION = new CommonException(
             CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 19, HttpServletResponse.SC_OK, "init thrift client error!", "初始化引擎网关client发生异常!");
 
+    /**
+     * 会员未登录
+     */
+    public static final CommonException MEMBER_NOT_LOGIN = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 20, HttpServletResponse.SC_OK, "member not logined", "会员未登录!");
+
 }

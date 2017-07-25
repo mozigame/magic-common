@@ -8,7 +8,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <version>1.0.2-SNAPSHOT</version>
     <artifactId>core</artifactId>
 
     <dependencies>
@@ -90,6 +90,11 @@
         <dependency>
             <groupId>com.magic.commons</groupId>
             <artifactId>model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.magic</groupId>
+            <artifactId>magic-user-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

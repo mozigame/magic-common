@@ -3,6 +3,7 @@ package com.magic.api.commons.core;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.core.context.RequestContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
 
     @Override
     protected void writeInternal(Object obj, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        ApiLogger.error("JsonHttpMessageConverter start");
         RequestContext.Result result = RequestContext.getRequestContext().getResult();
         boolean wrap = result.isWrap();
         if ((obj instanceof JSONObject || obj instanceof JSONArray) && wrap) {

@@ -77,6 +77,8 @@ public class CookieAuthService implements AuthService {
             throw ExceptionFactor.INVALID_UID_EXCEPTION;
         } else if (memberStatus == MemberStatus.logout) {
             throw ExceptionFactor.MEMBER_NOT_LOGIN;
+        } else if (memberStatus == MemberStatus.disable){
+            throw ExceptionFactor.MEMBER_DISABLE;
         }
         return uid;
     }

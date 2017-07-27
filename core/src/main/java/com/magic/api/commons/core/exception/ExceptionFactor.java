@@ -143,4 +143,10 @@ public class ExceptionFactor {
     public static final CommonException MEMBER_NOT_LOGIN = new CommonException(
             CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 20, HttpServletResponse.SC_OK, "member not logined", "会员未登录!");
 
+    /**
+     * 会员已被停用
+     */
+    public static final CommonException MEMBER_DISABLE = new CommonException(
+            CommonException.ERROR_LEVEL_SYSTEM, DEFAULT_SYSTEMCODE, DEFAULT_SHOWCODE, 21, HttpServletResponse.SC_OK, "member is disable", "会员已被停用!");
+
 }

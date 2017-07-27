@@ -26,6 +26,11 @@ public class ApiLogger {
         DEBUG.debug(message);
     }
 
+    public static boolean isDebugEnabled() {
+        return DEBUG.isDebugEnabled();
+    }
+
+
     public static void info(String message) {
         INFO.info(message);
     }

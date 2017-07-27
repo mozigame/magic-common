@@ -1,14 +1,19 @@
 package com.magic.api.commons.core.auth;
 
 import com.magic.api.commons.core.context.RequestContext;
+import com.magic.api.commons.core.exception.ExceptionFactor;
 import com.magic.api.commons.core.log.RequestLogRecord;
 import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
+import com.magic.user.entity.Member;
+import com.magic.user.enums.MemberStatus;
+import com.magic.user.service.dubbo.AccountDubboService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 @Order(30)
 public class CookieAuthService implements AuthService {
 
+
+    @Resource
+    private AccountDubboService accountDubboService;
     /**
      * 当前验证方式 是否支持本次请求
      * @param request           HttpServletRequest
@@ -58,6 +66,20 @@ public class CookieAuthService implements AuthService {
         long uid = authModel.getUid();
         requestContext.getClient().setDeviceId(deviceId);
         requestLogRecord.setAuth(Access.AccessType.COOKIE.getName());
+
+        MemberStatus memberStatus = null;
+        try {
+            memberStatus = accountDubboService.verifyMember(uid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (memberStatus == MemberStatus.disable) {
+            throw ExceptionFactor.INVALID_UID_EXCEPTION;
+        } else if (memberStatus == MemberStatus.logout) {
+            throw ExceptionFactor.MEMBER_NOT_LOGIN;
+        } else if (memberStatus == MemberStatus.disable){
+            throw ExceptionFactor.MEMBER_DISABLE;
+        }
         return uid;
     }
 

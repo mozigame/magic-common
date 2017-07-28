@@ -167,6 +167,11 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
     private static final int INDEX_ESCAPE_PLACE = 0;
     private static final int INDEX_PATTHRN = 1;
 
+    /**
+     * 处理xss，不使用工具是因为客户端来不及修改，只屏蔽<scrpit>和</script>
+     * @param value
+     * @return
+     */
     private static String getEscapeString(String value) {
 //        return StringEscapeUtils.escapeHtml4(value);
         for (Map.Entry<String, List> entry : REPLACE_COLLECTIONS.entrySet()) {

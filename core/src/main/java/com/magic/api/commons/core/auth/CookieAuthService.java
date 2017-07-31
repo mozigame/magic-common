@@ -6,7 +6,6 @@ import com.magic.api.commons.core.log.RequestLogRecord;
 import com.magic.api.commons.core.tools.CookieUtil;
 import com.magic.api.commons.core.tools.HeaderUtil;
 import com.magic.api.commons.core.tools.MauthUtil;
-import com.magic.user.entity.Member;
 import com.magic.user.enums.MemberStatus;
 import com.magic.user.service.dubbo.AccountDubboService;
 import org.apache.commons.lang3.StringUtils;

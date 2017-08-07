@@ -139,6 +139,9 @@ public class ThriftFactory {
      * @return
      */
 	private EGResp toEgRespForLog(EGResp resp) {
+		if(resp==null){
+			return null;
+		}
 		EGResp logObj=new EGResp();
 		logObj.setCode(resp.getCode());
 		logObj.setCodeIsSet(resp.isSetCode());
@@ -147,7 +150,7 @@ public class ThriftFactory {
 		logObj.setResult(resp.getResult());
 		String data=resp.getData();
 		//自动截取100个字符
-		if(data.length()>100){
+		if(data!=null && data.length()>100){
 			data=data.substring(0,  100);
 		}
 		logObj.setData(data);

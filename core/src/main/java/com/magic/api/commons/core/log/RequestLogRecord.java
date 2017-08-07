@@ -372,6 +372,38 @@ public class RequestLogRecord {
         stringBuilder.append(useTime);
         return String.valueOf(stringBuilder);
     }
+    
+    public String toStringShort() {
+    	String resp=String.valueOf(response);
+    	if(resp!=null && (resp.indexOf("{\"apistatus\":1")>=0)
+    			&& resp.length()>100){
+    		resp=resp.substring(0,  100);
+    	}
+        StringBuilder stringBuilder = new StringBuilder();
+        appendField(stringBuilder, requestId);
+        appendField(stringBuilder, auth);
+        appendField(stringBuilder, api);
+        appendField(stringBuilder, page);
+        appendField(stringBuilder, method);
+        appendField(stringBuilder, referer);
+        appendField(stringBuilder, responseStatus);
+        appendField(stringBuilder, responseSize);
+        appendField(stringBuilder, appid);
+        appendField(stringBuilder, platform);
+        appendField(stringBuilder, uid);
+        appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
+        appendField(stringBuilder, parameters);
+        appendField(stringBuilder, originalIp);
+        appendField(stringBuilder, requestIp);
+        appendField(stringBuilder, null != clientVersion ? clientVersion.toString() : DEFAULT_FIELD);
+        appendField(stringBuilder, ndeviceid);
+        appendField(stringBuilder, userAgent);
+        appendField(stringBuilder, resp);
+        appendField(stringBuilder, extend);
+        useTime = System.currentTimeMillis() - startTime;
+        stringBuilder.append(useTime);
+        return String.valueOf(stringBuilder);
+    }
 
     /**
      * 组装数据

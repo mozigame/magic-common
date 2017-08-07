@@ -1,17 +1,19 @@
 package com.magic.commons.enginegw.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.protocol.TProtocol;
+
 import com.alibaba.fastjson.JSON;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.tools.IPUtil;
 import com.magic.commons.enginegw.constants.Const;
 import com.magic.commons.enginegw.util.SignUtil;
-import com.magic.config.thrift.base.*;
+import com.magic.config.thrift.base.CmdType;
+import com.magic.config.thrift.base.EGHeader;
+import com.magic.config.thrift.base.EGReq;
+import com.magic.config.thrift.base.EGResp;
+import com.magic.config.thrift.base.Trace;
 import com.magic.config.thrift.uranus.EGServer;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
 
 /**
  * ThriftFactory2
@@ -96,7 +98,8 @@ public class ThriftFactory {
             protocol = connectionPoolFactory.getConnection();
             EGServer.Client client = new EGServer.Client(protocol);
             resp = client.CallEGService(req, trace);
-            ApiLogger.info(String.format("call gw. req: %s, trace: %s, resp: %s", JSON.toJSONString(req), JSON.toJSONString(trace), JSON.toJSONString(resp)));
+            EGResp logObj = toEgRespForLog(resp);
+            ApiLogger.info(String.format("call gw. req: %s, trace: %s, resp: %s", JSON.toJSONString(req), JSON.toJSONString(trace), JSON.toJSONString(logObj)));
         } catch (Exception e){//重试
             try {
                 if (protocol != null){
@@ -106,7 +109,8 @@ public class ThriftFactory {
                 protocol = connectionPoolFactory.getConnection();
                 EGServer.Client client = new EGServer.Client(protocol);
                 resp = client.CallEGService(req, trace);
-                ApiLogger.info("try one resp:" + JSON.toJSONString(resp));
+                EGResp logObj = toEgRespForLog(resp);
+                ApiLogger.info("try one resp:" + JSON.toJSONString(logObj));
             }catch (Exception e1){
                 try {
                     if (protocol != null){
@@ -116,7 +120,8 @@ public class ThriftFactory {
                     protocol = connectionPoolFactory.getConnection();
                     EGServer.Client client = new EGServer.Client(protocol);
                     resp = client.CallEGService(req, trace);
-                    ApiLogger.info("try two resp:" + JSON.toJSONString(resp));
+                    EGResp logObj = toEgRespForLog(resp);
+                    ApiLogger.info("try two resp:" + JSON.toJSONString(logObj));
                 }catch (Exception e2){
                     ApiLogger.error(String.format("call engine gw thrift server error. req: %s, trace: %s", JSON.toJSONString(req), JSON.toJSONString(trace)), e2);
                 }
@@ -127,6 +132,27 @@ public class ThriftFactory {
         }
         return resp;
     }
+
+    /**
+     * 对data进行截短，以减少日志量
+     * @param resp
+     * @return
+     */
+	private EGResp toEgRespForLog(EGResp resp) {
+		EGResp logObj=new EGResp();
+		logObj.setCode(resp.getCode());
+		logObj.setCodeIsSet(resp.isSetCode());
+		logObj.setDataIsSet(resp.isSetData());
+		logObj.setResultIsSet(resp.isSetResult());
+		logObj.setResult(resp.getResult());
+		String data=resp.getData();
+		//自动截取100个字符
+		if(data.length()>100){
+			data=data.substring(0,  100);
+		}
+		logObj.setData(data);
+		return logObj;
+	}
 
     /**
      * 组装trace对象

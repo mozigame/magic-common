@@ -41,7 +41,8 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         requestLogRecord.setParameters(request.getParameterMap());
         String ip = HeaderUtil.getIp(request);
         requestLogRecord.setOriginalIp(ip);
-        requestContext.setIp(ip);
+        String ips[] = ip.split(",");
+        requestContext.setIp(ips[0]);
         requestLogRecord.setRequestIp(request.getRemoteAddr());
         ClientVersion clientVersion = new ClientVersion(HeaderUtil.getClientVersion(request));
         requestLogRecord.setClientVersion(clientVersion);

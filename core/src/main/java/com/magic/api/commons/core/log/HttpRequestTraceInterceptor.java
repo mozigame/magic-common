@@ -72,10 +72,10 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         RequestLogRecord requestLogRecord = RequestContext.getRequestContext().getRequestLogRecord();
         int responseStatus = requestLogRecord.getResponseStatus();
-        if (HttpServletResponse.SC_OK == responseStatus) {
-            ApiLogger.requset(requestLogRecord.toString());
+        if (HttpServletResponse.SC_OK == responseStatus||responseStatus==0) {
+            ApiLogger.requset(requestLogRecord.toStringShort());
         } else {
-            ApiLogger.info(requestLogRecord.toString());
+            ApiLogger.info(requestLogRecord.toStringShort());
         }
         super.afterCompletion(request, response, handler, ex);
         RequestContext.clearRequestContext();

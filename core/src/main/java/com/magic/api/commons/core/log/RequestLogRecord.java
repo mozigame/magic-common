@@ -375,7 +375,7 @@ public class RequestLogRecord {
     
     public String toStringShort() {
     	String resp=String.valueOf(response);
-    	if(resp!=null && (resp.startsWith("{\"result\":{\"resultFlag\":1") || resp.startsWith("{\"apistatus\":1"))
+    	if(resp!=null && (resp.indexOf("{\"apistatus\":1")>=0)
     			&& resp.length()>100){
     		resp=resp.substring(0,  100);
     	}

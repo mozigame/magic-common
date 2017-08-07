@@ -7,6 +7,7 @@ import com.magic.api.commons.core.context.ClientVersion;
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.core.tools.HeaderUtil;
+import com.magic.api.commons.tools.IPUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -39,7 +40,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         requestLogRecord.setPlatform(clientType);
         client.setClientType(Client.ClientType.get(clientType));
         requestLogRecord.setParameters(request.getParameterMap());
-        String ip = HeaderUtil.getIp(request);
+        String ip = IPUtil.getReqIp(request);
         requestLogRecord.setOriginalIp(ip);
         requestContext.setIp(ip);
         requestLogRecord.setRequestIp(request.getRemoteAddr());

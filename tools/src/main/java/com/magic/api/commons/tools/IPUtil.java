@@ -74,6 +74,30 @@ public class IPUtil {
 
     private static String localIp = null;
 
+
+    /**
+     * 获取请求Ip，只获取一个
+     * @param request   HttpServletRequest
+     * @return IP
+     */
+    public static String getReqIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("CLIENTIP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        ApiLogger.info("Request get Ip : "+ ip);
+        return ip;
+    }
+
     /**
      * 只获取一次ip
      */

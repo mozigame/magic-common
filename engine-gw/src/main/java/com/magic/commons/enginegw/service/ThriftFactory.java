@@ -29,11 +29,16 @@ public class ThriftFactory {
     private ConnectionPoolFactory connectionPoolFactory;
 
     /**
+     * 是否打印thrift返回数据中的data
+     */
+    private boolean holdDataLog;
+    /**
      * 构造函数
      * @param connectionPoolFactory
      */
-    public ThriftFactory(ConnectionPoolFactory connectionPoolFactory) {
+    public ThriftFactory(ConnectionPoolFactory connectionPoolFactory, boolean holdDataLog) {
         this.connectionPoolFactory = connectionPoolFactory;
+        this.holdDataLog = holdDataLog;
     }
 
     /**
@@ -149,11 +154,9 @@ public class ThriftFactory {
 		logObj.setResultIsSet(resp.isSetResult());
 		logObj.setResult(resp.getResult());
 		String data=resp.getData();
-		//自动截取100个字符
-		if(data!=null && data.length()>100){
-			data=data.substring(0,  100);
-		}
-		logObj.setData(data);
+        if (holdDataLog) {
+            logObj.setData(data);
+        }
 		return logObj;
 	}
 

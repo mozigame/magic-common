@@ -398,10 +398,10 @@ public class RequestLogRecord {
         appendField(stringBuilder, null != clientVersion ? clientVersion.toString() : DEFAULT_FIELD);
         appendField(stringBuilder, ndeviceid);
         appendField(stringBuilder, userAgent);
-        appendField(stringBuilder, resp);
-        appendField(stringBuilder, extend);
         useTime = System.currentTimeMillis() - startTime;
         stringBuilder.append(useTime);
+        appendField(stringBuilder, resp);
+        appendField(stringBuilder, extend);
         return String.valueOf(stringBuilder);
     }
 

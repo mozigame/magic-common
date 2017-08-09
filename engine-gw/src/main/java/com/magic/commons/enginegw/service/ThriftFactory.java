@@ -113,7 +113,7 @@ public class ThriftFactory {
             EGServer.Client client = new EGServer.Client(protocol);
             resp = client.CallEGService(req, trace);
             EGResp logObj = toEgRespForLog(resp);
-            ApiLogger.info(String.format("call gw. req: %s, trace: %s, resp: %s", JSON.toJSONString(req), JSON.toJSONString(trace), JSON.toJSONString(logObj)));
+            ApiLogger.info(String.format("call gw. req: %s, cmd : %s, trace: %s, resp: %s", JSON.toJSONString(req), "0x" +Long.toHexString(req.getHeader().getCmd()), JSON.toJSONString(trace), JSON.toJSONString(logObj)));
         } catch (Exception e){//重试
             try {
                 if (protocol != null){
@@ -165,8 +165,12 @@ public class ThriftFactory {
 		String data=resp.getData();
         if (holdDataLog) {
             logObj.setData(data);
+        } else {
+            if(StringUtils.isNotBlank(data) && data.length()>100){
+                resp.setData(data.substring(0,  100));
+            }
         }
-		return logObj;
+        return logObj;
 	}
 
     /**

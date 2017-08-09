@@ -34,8 +34,7 @@ public class SignUtil {
         reqStr.append(header.getType().getValue());
         reqStr.append(Const.MD5_SPILT);
         reqStr.append("cmd=");
-        reqStr.append("0x");
-        reqStr.append(Long.toHexString(header.getCmd()));
+        reqStr.append(header.getCmd());
         reqStr.append(Const.MD5_SPILT);
         reqStr.append("timestamp=");
         reqStr.append(header.getTimestamp());

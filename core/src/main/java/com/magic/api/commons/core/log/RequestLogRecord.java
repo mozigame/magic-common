@@ -360,7 +360,7 @@ public class RequestLogRecord {
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
         useTime = System.currentTimeMillis() - startTime;
-        stringBuilder.append(useTime);
+        appendField(stringBuilder, useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);
@@ -394,7 +394,7 @@ public class RequestLogRecord {
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
         useTime = System.currentTimeMillis() - startTime;
-        stringBuilder.append(useTime);
+        appendField(stringBuilder,useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);

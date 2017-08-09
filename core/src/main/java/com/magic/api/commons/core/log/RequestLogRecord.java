@@ -359,6 +359,8 @@ public class RequestLogRecord {
         appendField(stringBuilder, appid);
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
+        useTime = System.currentTimeMillis() - startTime;
+        stringBuilder.append(useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);
@@ -391,6 +393,8 @@ public class RequestLogRecord {
         appendField(stringBuilder, appid);
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
+        useTime = System.currentTimeMillis() - startTime;
+        stringBuilder.append(useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);
@@ -398,8 +402,6 @@ public class RequestLogRecord {
         appendField(stringBuilder, null != clientVersion ? clientVersion.toString() : DEFAULT_FIELD);
         appendField(stringBuilder, ndeviceid);
         appendField(stringBuilder, userAgent);
-        useTime = System.currentTimeMillis() - startTime;
-        stringBuilder.append(useTime);
         appendField(stringBuilder, resp);
         appendField(stringBuilder, extend);
         return String.valueOf(stringBuilder);

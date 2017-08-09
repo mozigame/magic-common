@@ -31,7 +31,16 @@ public class ThriftFactory {
     /**
      * 是否打印thrift返回数据中的data
      */
-    private boolean holdDataLog;
+    private boolean holdDataLog = false;
+
+    /**
+     * 构造函数
+     * @param connectionPoolFactory
+     */
+    public ThriftFactory(ConnectionPoolFactory connectionPoolFactory) {
+        this.connectionPoolFactory = connectionPoolFactory;
+    }
+
     /**
      * 构造函数
      * @param connectionPoolFactory

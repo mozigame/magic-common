@@ -167,7 +167,7 @@ public class ThriftFactory {
             logObj.setData(data);
         } else {
             if(StringUtils.isNotBlank(data) && data.length()>100){
-                resp.setData(data.substring(0,  100));
+                logObj.setData(data.substring(0,  100));
             }
         }
         return logObj;

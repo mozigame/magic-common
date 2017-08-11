@@ -250,12 +250,14 @@ public class IPUtil {
      * @return 数字
      */
     public static int ipToInt(final String address, final boolean isSegment) {
-        String customAddress = address;
+       /* String customAddress = address;
         String ips [] = address.split(",");
         if (ips.length > 1) {
             customAddress = ips[0];
         }
         final String[] addressBytes = customAddress.split("\\.");
+        */
+        final String[] addressBytes = address.split("\\.");
         int length = addressBytes.length;
         if (length < 3) {
             return 0;

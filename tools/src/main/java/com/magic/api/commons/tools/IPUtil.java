@@ -81,7 +81,7 @@ public class IPUtil {
      * @return IP
      */
     public static String getReqIp(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
+        String ip = request.getHeader("x-forwarded-for");//如果多级反向代理，会有多个ip
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
@@ -94,8 +94,32 @@ public class IPUtil {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
+        ip = getIp(ip);
         ApiLogger.info("Request get Ip : "+ ip);
         return ip;
+    }
+
+    /**
+     * 解决多级反向代理导致多ip的问题
+     * @param ip
+     * @return
+     */
+    private static String getIp(String ip) {
+        if (StringUtils.isNotEmpty(ip)){
+            if (ip.equals("0:0:0:0:0:0:0:1")){
+                return "127.0.0.1";
+            }
+            String[] ips = ip.split(",");
+            if (ips != null && ips.length > 0){
+                for (int i = 0; i < ips.length; i++) {
+                    if (!"unknown".equalsIgnoreCase(ips[i])){
+                        ip = ips[i];
+                        return ip;
+                    }
+                }
+            }
+        }
+        return "127.0.0.1";
     }
 
     /**

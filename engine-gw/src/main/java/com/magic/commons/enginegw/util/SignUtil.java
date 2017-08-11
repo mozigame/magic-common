@@ -7,6 +7,7 @@ import com.magic.config.thrift.base.EGReq;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
 /**
@@ -70,7 +71,7 @@ public class SignUtil {
                 str[k++] = hexDigits[byte0 >>> 4 & 0xf];
                 str[k++] = hexDigits[byte0 & 0xf];
             }
-            ApiLogger.info("char array." + str);
+            ApiLogger.info("char array." + new String(str));
             return new String(str);
         } catch (Exception e) {
             return null;
@@ -84,6 +85,11 @@ public class SignUtil {
         System.out.println(md5(body));
         String req = "version=1:type=80:cmd=5242891:timestamp=1497869712022:body={\"incomeFeeRate\":15,\"withdrawFeeRate\":10,\"withdrawFeeMax\":99990000,\"ownerId\":10001,\"incomeFeeMax\":300000,\"poundageName\":\"shouxufeifangan007\"}";
         System.out.println(md5(req));
+
+        EGHeader header = new EGHeader();
+        header.setCmd(0x1004);
+        System.out.println(header.cmd);
+        System.out.println(Long.toHexString(header.cmd));
     }
 
 }

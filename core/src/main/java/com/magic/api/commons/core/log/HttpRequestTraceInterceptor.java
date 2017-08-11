@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 请求日志处理
+ *
  * @author zz
  */
 public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
@@ -42,7 +43,8 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         requestLogRecord.setParameters(request.getParameterMap());
         String ip = IPUtil.getReqIp(request);
         requestLogRecord.setOriginalIp(ip);
-        requestContext.setIp(ip);
+        String ips[] = ip.split(",");
+        requestContext.setIp(ips[0]);
         requestLogRecord.setRequestIp(request.getRemoteAddr());
         ClientVersion clientVersion = new ClientVersion(HeaderUtil.getClientVersion(request));
         requestLogRecord.setClientVersion(clientVersion);
@@ -72,12 +74,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         RequestLogRecord requestLogRecord = RequestContext.getRequestContext().getRequestLogRecord();
-        int responseStatus = requestLogRecord.getResponseStatus();
-        if (HttpServletResponse.SC_OK == responseStatus) {
-            ApiLogger.requset(requestLogRecord.toString());
-        } else {
-            ApiLogger.info(requestLogRecord.toString());
-        }
+        ApiLogger.requset(requestLogRecord.toStringShort());
         super.afterCompletion(request, response, handler, ex);
         RequestContext.clearRequestContext();
     }

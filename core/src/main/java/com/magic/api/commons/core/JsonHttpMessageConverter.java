@@ -2,6 +2,7 @@ package com.magic.api.commons.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.magic.api.commons.ApiLogger;
@@ -106,6 +107,10 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
                     return true;
                 }
             }
+        }catch (JSONException e){
+            StringBuilder msg = new StringBuilder();
+            msg.append("disposeStringResult::JSONException occur").append(e.getMessage());
+            ApiLogger.warn(msg.toString());
         } catch (Exception e) {
             ApiLogger.error("disposeStringResult::error", e);
         }
@@ -247,7 +252,7 @@ public class JsonHttpMessageConverter extends FastJsonHttpMessageConverter {
         JSONArray jsonArray = JSONObject.parseArray(s1);
         System.out.println(jsonObject instanceof Map);
 
-        String data = "123456";
+        String data = "123456sssss";
         Object object = JSON.parse(data);
         if (object instanceof Map) {
             System.out.println("111");

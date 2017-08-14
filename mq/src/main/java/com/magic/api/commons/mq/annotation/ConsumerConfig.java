@@ -16,13 +16,28 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ConsumerConfig {
 
-    //nameServer
-    String nameServer() default "";
-    //一组消费者唯一标示
+    /**
+     * 连接的server RocketMQ为NameServer Kafka为broker bootstrap.servers
+     * @return 连接的server
+     */
+    String server() default "";
+
+    /**
+     * 一组消费者唯一标示
+     * @return  一组消费者唯一标示
+     */
     String consumerName();
-    //话题
+
+    /**
+     * topic
+     * @return  topic
+     */
     Topic topic();
-    //标签
+
+    /**
+     * 标签
+     * @return 标签
+     */
     String tag() default "";
 
 }

@@ -24,6 +24,7 @@
         <module>resource-auth</module>
         <module>engine-gw</module>
         <module>kafka</module>
+        <module>engine-gateway</module>
     </modules>
 
     <properties>
@@ -45,7 +46,7 @@
             <dependency>
                 <groupId>com.magic.commons</groupId>
                 <artifactId>mq</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.1-SNAPSHOT</version>
             </dependency>
             <!--Kafka消息队列-->
             <dependency>
@@ -122,6 +123,12 @@
             <dependency>
                 <groupId>com.magic.commons</groupId>
                 <artifactId>engine-gw</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <!--engine-gateway-->
+            <dependency>
+                <groupId>com.magic.commons</groupId>
+                <artifactId>engine-gateway</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <!--MySQL驱动-->

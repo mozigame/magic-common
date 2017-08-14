@@ -6,14 +6,7 @@ import com.magic.api.commons.mq.api.Topic;
  * 消费者配置
  * @author zz
  */
-public class ConsumerConf {
-
-    public ConsumerConf() {
-    }
-
-    public ConsumerConf(String nameServer) {
-        this.nameServer = nameServer;
-    }
+public class ConsumerConf<Z> {
 
     /**
      * 一组消费者唯一标示
@@ -21,9 +14,9 @@ public class ConsumerConf {
     private String consumerName;
 
     /**
-     * nameServer地址
+     * RocketMQ为nameServer地址 Kafka为properties
      */
-    private String nameServer;
+    private Z data;
 
     /**
      * 话题
@@ -43,12 +36,12 @@ public class ConsumerConf {
         this.consumerName = consumerName;
     }
 
-    public String getNameServer() {
-        return nameServer;
+    public Z getData() {
+        return data;
     }
 
-    public void setNameServer(String nameServer) {
-        this.nameServer = nameServer;
+    public void setData(Z data) {
+        this.data = data;
     }
 
     public Topic getTopic() {
@@ -71,7 +64,7 @@ public class ConsumerConf {
     public String toString() {
         return "ConsumerConf{" +
                 "consumerName='" + consumerName + '\'' +
-                ", nameServer='" + nameServer + '\'' +
+                ", data=" + data +
                 ", topic=" + topic +
                 ", tag='" + tag + '\'' +
                 '}';

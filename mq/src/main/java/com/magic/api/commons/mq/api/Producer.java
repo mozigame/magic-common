@@ -1,4 +1,4 @@
-package com.magic.api.commons.mq;
+package com.magic.api.commons.mq.api;
 
 import com.magic.api.commons.mq.api.Topic;
 

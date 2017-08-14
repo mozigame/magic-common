@@ -1,10 +1,9 @@
-package com.magic.api.commons.mq;
+package com.magic.api.commons.mq.rocket;
 
 
 import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
 import com.alibaba.rocketmq.common.message.Message;
@@ -41,6 +40,9 @@ public class ConsumerMain {
      */
     public ConsumerMain(List<Consumer> consumers, String nameServerAddr) {
         this.consumers = consumers;
+        if (null == nameServerAddr || "".equals(nameServerAddr)) {
+            throw new RuntimeException("nameServerAddr不能为空");
+        }
         try {
             doSomething(consumers, nameServerAddr);
         } catch (Exception e) {
@@ -66,14 +68,11 @@ public class ConsumerMain {
         if (null == consumerConfig || !(consumerConfig instanceof ConsumerConfig)) {
             throw new RuntimeException(consumeClass.getClass().toString() + " 没有找到注解 " + ConsumerConfig.class.toString());
         }
-        ConsumerConf consumerConf;
-        if (null != consumerConfig.nameServer() && !"".equals(consumerConfig.nameServer())) {
-            consumerConf = new ConsumerConf(consumerConfig.nameServer());
+        ConsumerConf<String> consumerConf = new ConsumerConf();
+        if (null != consumerConfig.server() && !"".equals(consumerConfig.server())) {
+            consumerConf.setData(consumerConfig.server());
         } else {
-            if (null == nameServerAddr || "".equals(nameServerAddr)) {
-                throw new RuntimeException("nameServerAddr不能为空");
-            }
-            consumerConf = new ConsumerConf(nameServerAddr);
+            consumerConf.setData(nameServerAddr);
         }
         consumerConf.setConsumerName(consumerConfig.consumerName());
         consumerConf.setTopic(consumerConfig.topic());
@@ -87,8 +86,8 @@ public class ConsumerMain {
      * @param consumerConf
      * @param consumeClass
      */
-    private void check(ConsumerConf consumerConf, Class<?> consumeClass) {
-        if (null == consumerConf.getNameServer() || "".equals(consumerConf.getNameServer())) {
+    private void check(ConsumerConf<String> consumerConf, Class<?> consumeClass) {
+        if (null == consumerConf.getData() || "".equals(consumerConf.getData())) {
             throw new RuntimeException(consumeClass.toString() + " NameServer不能为空");
         }
         if (null == consumerConf.getConsumerName() || "".equals(consumerConf.getConsumerName())) {
@@ -105,45 +104,43 @@ public class ConsumerMain {
      * @param consumers     消费者
      * @throws MQClientException   MQClientException
      */
-    private void executeMsg(final ConsumerConf consumerConf, final Consumer consumers) throws MQClientException {
+    private void executeMsg(final ConsumerConf<String> consumerConf, final Consumer consumers) throws MQClientException {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerConf.getConsumerName());
-        consumer.setNamesrvAddr(consumerConf.getNameServer());
+        consumer.setNamesrvAddr(consumerConf.getData());
         consumer.subscribe(consumerConf.getTopic().getValue(), null == consumerConf.getTag() || "".equals(consumerConf.getTag()) ? null : consumerConf.getTag());
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.registerMessageListener(
-                new MessageListenerConcurrently() {
-                    public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext context) {
-                        String topic = null;
-                        String msg = null;
-                        String tags = null;
-                        String keys = null;
-                        try {
-                            Message message = list.get(0);
-                            topic = message.getTopic();
-                            msg = new String(message.getBody());
-                            tags = message.getTags();
-                            keys = message.getKeys();
+                (List<MessageExt> list, ConsumeConcurrentlyContext context) -> {
+                    String topic = null;
+                    String msg = null;
+                    String tags = null;
+                    String keys = null;
+                    try {
+                        Message message = list.get(0);
+                        topic = message.getTopic();
+                        msg = new String(message.getBody());
+                        tags = message.getTags();
+                        keys = message.getKeys();
 
-                            StringBuilder builder = new StringBuilder();
-                            builder.append("待处理消息");
-                            builder.append(" consumerName ").append(consumerConf.getConsumerName());
-                            builder.append(" topic ").append(topic);
-                            builder.append(" msg ").append(msg);
-                            builder.append(" tags ").append(tags);
-                            builder.append(" keys ").append(keys);
-                            ApiLogger.debug(String.valueOf(builder));
-                            boolean flag = consumers.doit(topic, tags, keys, msg);
-                            return flag ? ConsumeConcurrentlyStatus.CONSUME_SUCCESS : ConsumeConcurrentlyStatus.RECONSUME_LATER;
-                        } catch (Exception e) {
-                            StringBuilder builder = new StringBuilder();
-                            builder.append(consumerConf.toString()).append(" 处理消息发生异常 ");
-                            builder.append(" topic ").append(topic);
-                            builder.append(" msg ").append(msg);
-                            builder.append(" tags ").append(tags);
-                            builder.append(" keys ").append(keys);
-                            ApiLogger.error(String.valueOf(builder), e);
-                            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-                        }
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("待处理消息");
+                        builder.append(" consumerName ").append(consumerConf.getConsumerName());
+                        builder.append(" topic ").append(topic);
+                        builder.append(" msg ").append(msg);
+                        builder.append(" tags ").append(tags);
+                        builder.append(" keys ").append(keys);
+                        ApiLogger.debug(String.valueOf(builder));
+                        boolean flag = consumers.doit(topic, tags, keys, msg);
+                        return flag ? ConsumeConcurrentlyStatus.CONSUME_SUCCESS : ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                    } catch (Exception e) {
+                        StringBuilder builder = new StringBuilder();
+                        builder.append(consumerConf.toString()).append(" 处理消息发生异常 ");
+                        builder.append(" topic ").append(topic);
+                        builder.append(" msg ").append(msg);
+                        builder.append(" tags ").append(tags);
+                        builder.append(" keys ").append(keys);
+                        ApiLogger.error(String.valueOf(builder), e);
+                        return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                     }
                 }
         );

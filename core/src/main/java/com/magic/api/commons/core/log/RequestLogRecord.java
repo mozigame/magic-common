@@ -359,6 +359,8 @@ public class RequestLogRecord {
         appendField(stringBuilder, appid);
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
+        useTime = System.currentTimeMillis() - startTime;
+        appendField(stringBuilder, useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);
@@ -366,16 +368,16 @@ public class RequestLogRecord {
         appendField(stringBuilder, null != clientVersion ? clientVersion.toString() : DEFAULT_FIELD);
         appendField(stringBuilder, ndeviceid);
         appendField(stringBuilder, userAgent);
-        appendField(stringBuilder, response);
-        appendField(stringBuilder, extend);
         useTime = System.currentTimeMillis() - startTime;
         stringBuilder.append(useTime);
+        appendField(stringBuilder, response);
+        appendField(stringBuilder, extend);
         return String.valueOf(stringBuilder);
     }
     
     public String toStringShort() {
     	String resp=String.valueOf(response);
-    	if(resp!=null && (resp.indexOf("{\"apistatus\":1")>=0)
+    	if(resp!=null && (resp.indexOf("\"apistatus\":1")>=0)
     			&& resp.length()>100){
     		resp=resp.substring(0,  100);
     	}
@@ -391,6 +393,8 @@ public class RequestLogRecord {
         appendField(stringBuilder, appid);
         appendField(stringBuilder, platform);
         appendField(stringBuilder, uid);
+        useTime = System.currentTimeMillis() - startTime;
+        appendField(stringBuilder,useTime);
         appendField(stringBuilder, null != userType ? userType.getName() : DEFAULT_FIELD);
         appendField(stringBuilder, parameters);
         appendField(stringBuilder, originalIp);
@@ -400,8 +404,6 @@ public class RequestLogRecord {
         appendField(stringBuilder, userAgent);
         appendField(stringBuilder, resp);
         appendField(stringBuilder, extend);
-        useTime = System.currentTimeMillis() - startTime;
-        stringBuilder.append(useTime);
         return String.valueOf(stringBuilder);
     }
 

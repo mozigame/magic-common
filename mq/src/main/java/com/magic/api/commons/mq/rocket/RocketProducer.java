@@ -1,4 +1,4 @@
-package com.magic.api.commons.mq;
+package com.magic.api.commons.mq.rocket;
 
 import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
@@ -6,6 +6,7 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.client.producer.SendStatus;
 import com.alibaba.rocketmq.common.message.Message;
 import com.magic.api.commons.ApiLogger;
+import com.magic.api.commons.mq.api.Producer;
 import com.magic.api.commons.mq.api.Topic;
 
 /**
@@ -74,7 +75,7 @@ public class RocketProducer implements Producer {
                 ApiLogger.debug(String.valueOf(stringBuilder));
                 return false;
             }
-        } catch (Exception e) {
+        } catch (Exception e) {//TODO 调整
             throw new RuntimeException(String.valueOf(stringBuilder.append(" 失败")), e);
         }
     }

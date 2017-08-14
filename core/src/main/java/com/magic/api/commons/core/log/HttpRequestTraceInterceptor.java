@@ -7,6 +7,7 @@ import com.magic.api.commons.core.context.ClientVersion;
 import com.magic.api.commons.core.context.RequestContext;
 import com.magic.api.commons.ApiLogger;
 import com.magic.api.commons.core.tools.HeaderUtil;
+import com.magic.api.commons.tools.IPUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 请求日志处理
+ *
  * @author zz
  */
 public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
@@ -39,7 +41,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
         requestLogRecord.setPlatform(clientType);
         client.setClientType(Client.ClientType.get(clientType));
         requestLogRecord.setParameters(request.getParameterMap());
-        String ip = HeaderUtil.getIp(request);
+        String ip = IPUtil.getReqIp(request);
         requestLogRecord.setOriginalIp(ip);
         String ips[] = ip.split(",");
         requestContext.setIp(ips[0]);
@@ -72,12 +74,7 @@ public class HttpRequestTraceInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         RequestLogRecord requestLogRecord = RequestContext.getRequestContext().getRequestLogRecord();
-        int responseStatus = requestLogRecord.getResponseStatus();
-        if (HttpServletResponse.SC_OK == responseStatus||responseStatus==0) {
-            ApiLogger.requset(requestLogRecord.toStringShort());
-        } else {
-            ApiLogger.info(requestLogRecord.toStringShort());
-        }
+        ApiLogger.requset(requestLogRecord.toStringShort());
         super.afterCompletion(request, response, handler, ex);
         RequestContext.clearRequestContext();
     }

@@ -74,6 +74,54 @@ public class IPUtil {
 
     private static String localIp = null;
 
+
+    /**
+     * 获取请求Ip，只获取一个
+     * @param request   HttpServletRequest
+     * @return IP
+     */
+    public static String getReqIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");//如果多级反向代理，会有多个ip
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("CLIENTIP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        ip = getIp(ip);
+        ApiLogger.info("Request get Ip : "+ ip);
+        return ip;
+    }
+
+    /**
+     * 解决多级反向代理导致多ip的问题
+     * @param ip
+     * @return
+     */
+    private static String getIp(String ip) {
+        if (StringUtils.isNotEmpty(ip)){
+            if (ip.equals("0:0:0:0:0:0:0:1")){
+                return "127.0.0.1";
+            }
+            String[] ips = ip.split(",");
+            if (ips != null && ips.length > 0){
+                for (int i = 0; i < ips.length; i++) {
+                    if (!"unknown".equalsIgnoreCase(ips[i])){
+                        ip = ips[i];
+                        return ip;
+                    }
+                }
+            }
+        }
+        return "127.0.0.1";
+    }
+
     /**
      * 只获取一次ip
      */
@@ -202,12 +250,14 @@ public class IPUtil {
      * @return 数字
      */
     public static int ipToInt(final String address, final boolean isSegment) {
-        String customAddress = address;
+       /* String customAddress = address;
         String ips [] = address.split(",");
         if (ips.length > 1) {
             customAddress = ips[0];
         }
         final String[] addressBytes = customAddress.split("\\.");
+        */
+        final String[] addressBytes = address.split("\\.");
         int length = addressBytes.length;
         if (length < 3) {
             return 0;

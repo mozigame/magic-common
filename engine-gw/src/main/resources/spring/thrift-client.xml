@@ -28,5 +28,6 @@
        <!-- thrift service -->
        <bean id="thriftFactory" class="com.magic.commons.enginegw.service.ThriftFactory">
               <constructor-arg name="connectionPoolFactory" ref="connectPoolFacory"/>
+              <constructor-arg name="holdDataLog" value="${enginegw.thrift.hold.log}"/>
        </bean>
 </beans>

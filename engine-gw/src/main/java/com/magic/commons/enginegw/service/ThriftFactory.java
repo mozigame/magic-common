@@ -29,11 +29,25 @@ public class ThriftFactory {
     private ConnectionPoolFactory connectionPoolFactory;
 
     /**
+     * 是否打印thrift返回数据中的data
+     */
+    private boolean holdDataLog = false;
+
+    /**
      * 构造函数
      * @param connectionPoolFactory
      */
     public ThriftFactory(ConnectionPoolFactory connectionPoolFactory) {
         this.connectionPoolFactory = connectionPoolFactory;
+    }
+
+    /**
+     * 构造函数
+     * @param connectionPoolFactory
+     */
+    public ThriftFactory(ConnectionPoolFactory connectionPoolFactory, boolean holdDataLog) {
+        this.connectionPoolFactory = connectionPoolFactory;
+        this.holdDataLog = holdDataLog;
     }
 
     /**
@@ -99,7 +113,7 @@ public class ThriftFactory {
             EGServer.Client client = new EGServer.Client(protocol);
             resp = client.CallEGService(req, trace);
             EGResp logObj = toEgRespForLog(resp);
-            ApiLogger.info(String.format("call gw. req: %s, trace: %s, resp: %s", JSON.toJSONString(req), JSON.toJSONString(trace), JSON.toJSONString(logObj)));
+            ApiLogger.info(String.format("call gw. req: %s, cmd : %s, trace: %s, resp: %s", JSON.toJSONString(req), "0x" +Long.toHexString(req.getHeader().getCmd()), JSON.toJSONString(trace), JSON.toJSONString(logObj)));
         } catch (Exception e){//重试
             try {
                 if (protocol != null){
@@ -149,12 +163,14 @@ public class ThriftFactory {
 		logObj.setResultIsSet(resp.isSetResult());
 		logObj.setResult(resp.getResult());
 		String data=resp.getData();
-		//自动截取100个字符
-		if(data!=null && data.length()>100){
-			data=data.substring(0,  100);
-		}
-		logObj.setData(data);
-		return logObj;
+        if (holdDataLog) {
+            logObj.setData(data);
+        } else {
+            if(StringUtils.isNotBlank(data) && data.length()>100){
+                logObj.setData(data.substring(0,  100));
+            }
+        }
+        return logObj;
 	}
 
     /**

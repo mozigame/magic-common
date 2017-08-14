@@ -13,7 +13,7 @@ public class MauthUtilTest {
 
     public static void createOldMauth() {
 //        int uid = 105094;
-        int uid = 11566296;
+        int uid = 12878362;
         String old = MauthUtil.createOld(uid, System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 365));
         System.out.println(old);
         System.out.println(MauthUtil.getUid(old).getUid());

@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 public class CookieAuthService implements AuthService {
 
 
-    @Resource
+//    @Resource
     private AccountDubboService accountDubboService;
     /**
      * 当前验证方式 是否支持本次请求
@@ -66,19 +66,19 @@ public class CookieAuthService implements AuthService {
         requestContext.getClient().setDeviceId(deviceId);
         requestLogRecord.setAuth(Access.AccessType.COOKIE.getName());
 
-        MemberStatus memberStatus = null;
-        try {
-            memberStatus = accountDubboService.verifyMember(uid);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (memberStatus == MemberStatus.disable) {
-            throw ExceptionFactor.INVALID_UID_EXCEPTION;
-        } else if (memberStatus == MemberStatus.logout) {
-            throw ExceptionFactor.MEMBER_NOT_LOGIN;
-        } else if (memberStatus == MemberStatus.disable){
-            throw ExceptionFactor.MEMBER_DISABLE;
-        }
+//        MemberStatus memberStatus = null;
+//        try {
+//            memberStatus = accountDubboService.verifyMember(uid);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        if (memberStatus == MemberStatus.disable) {
+//            throw ExceptionFactor.INVALID_UID_EXCEPTION;
+//        } else if (memberStatus == MemberStatus.logout) {
+//            throw ExceptionFactor.MEMBER_NOT_LOGIN;
+//        } else if (memberStatus == MemberStatus.disable){
+//            throw ExceptionFactor.MEMBER_DISABLE;
+//        }
         return uid;
     }
 
